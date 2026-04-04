@@ -2677,21 +2677,20 @@
             cursor: pointer;
             pointer-events: auto;
             transition: transform 0.3s;
-            filter: invert(1) drop-shadow(0 0 10px rgba(0,200,83,0.25));
-            mix-blend-mode: screen;
+            filter: drop-shadow(0 0 10px rgba(0,200,83,0.25));
             animation: heisenGlow 4s ease-in-out infinite;
         }
 
         .heisenberg-agent:hover {
             transform: scale(1.08);
             animation: heisenTilt 2s ease-in-out infinite;
-            filter: invert(1) drop-shadow(0 0 25px rgba(0,200,83,0.6));
+            filter: drop-shadow(0 0 25px rgba(0,200,83,0.6));
         }
 
         /* Breathing glow animation */
         @keyframes heisenGlow {
-            0%, 100% { filter: invert(1) drop-shadow(0 0 8px rgba(0,200,83,0.15)); }
-            50% { filter: invert(1) drop-shadow(0 0 20px rgba(0,200,83,0.4)); }
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(0,200,83,0.15)); }
+            50% { filter: drop-shadow(0 0 20px rgba(0,200,83,0.4)); }
         }
 
         /* Menacing head tilt */
@@ -3520,7 +3519,7 @@
             <span id="heisenText"></span>
         </div>
         <img class="heisenberg-agent" id="heisenAgent" onclick="nextHeisenMessage()" title="Кликни для совета"
-             src="heisenberg.jpg" alt="Heisenberg" />
+             src="haizenberg.png" alt="Heisenberg" />
     </div>
 
     <script>
