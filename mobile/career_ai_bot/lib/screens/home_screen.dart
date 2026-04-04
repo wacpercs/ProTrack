@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final Function(int)? onNavigate;
+  const DashboardScreen({super.key, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class DashboardScreen extends StatelessWidget {
                 title: 'Вакансии',
                 desc: 'Подобранные предложения по твоему профилю',
                 badge: 'НОВОЕ',
-                onTap: () => DefaultTabController.of(context)?.animateTo(2),
+                onTap: () => onNavigate?.call(2),
               ),
               const SizedBox(height: 10),
               _DashCard(
@@ -56,7 +57,7 @@ class DashboardScreen extends StatelessWidget {
                 title: 'AI Анализ',
                 desc: 'Подбор профессий и карьерный план',
                 badge: 'AI',
-                onTap: () => DefaultTabController.of(context)?.animateTo(1),
+                onTap: () => onNavigate?.call(1),
               ),
               const SizedBox(height: 10),
               _DashCard(

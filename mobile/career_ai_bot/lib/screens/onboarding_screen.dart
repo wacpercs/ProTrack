@@ -4,8 +4,9 @@ import '../services/api_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final ApiService apiService;
+  final VoidCallback? onProfileSaved;
 
-  const OnboardingScreen({Key? key, required this.apiService}) : super(key: key);
+  const OnboardingScreen({Key? key, required this.apiService, this.onProfileSaved}) : super(key: key);
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -385,7 +386,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Профиль сохранен!')),
       );
-      Navigator.pushReplacementNamed(context, '/');
+      if (widget.onProfileSaved != null) {
+        widget.onProfileSaved!();
+      } else {
+        Navigator.pushReplacementNamed(context, '/');
+      }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ошибка сохранения'), backgroundColor: Colors.red),

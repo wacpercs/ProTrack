@@ -1,5 +1,6 @@
 // lib/screens/career_tab_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 
 class CareerTabScreen extends StatefulWidget {
@@ -25,24 +26,62 @@ class _CareerTabScreenState extends State<CareerTabScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadCachedResults();
+  }
+
+  Future<void> _loadCachedResults() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedProfessions = prefs.getString('cached_professions');
+    final cachedCareerPlan = prefs.getString('cached_career_plan');
+    final cachedSkillGap = prefs.getString('cached_skill_gap');
+    if (mounted) {
+      setState(() {
+        if (cachedProfessions != null) _professions = cachedProfessions;
+        if (cachedCareerPlan != null) _careerPlan = cachedCareerPlan;
+        if (cachedSkillGap != null) _skillGap = cachedSkillGap;
+      });
+    }
+  }
+
+  Future<void> _saveCachedResult(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
   }
 
   Future<void> _loadProfessions() async {
     setState(() => _isLoadingProfessions = true);
-    _professions = await widget.apiService.getProfessions();
-    setState(() => _isLoadingProfessions = false);
+    final result = await widget.apiService.getProfessions();
+    if (mounted) {
+      setState(() {
+        _professions = result;
+        _isLoadingProfessions = false;
+      });
+      _saveCachedResult('cached_professions', result);
+    }
   }
 
   Future<void> _loadCareerPlan() async {
     setState(() => _isLoadingPlan = true);
-    _careerPlan = await widget.apiService.getCareerPlan();
-    setState(() => _isLoadingPlan = false);
+    final result = await widget.apiService.getCareerPlan();
+    if (mounted) {
+      setState(() {
+        _careerPlan = result;
+        _isLoadingPlan = false;
+      });
+      _saveCachedResult('cached_career_plan', result);
+    }
   }
 
   Future<void> _loadSkillGap() async {
     setState(() => _isLoadingSkillGap = true);
-    _skillGap = await widget.apiService.getSkillGap();
-    setState(() => _isLoadingSkillGap = false);
+    final result = await widget.apiService.getSkillGap();
+    if (mounted) {
+      setState(() {
+        _skillGap = result;
+        _isLoadingSkillGap = false;
+      });
+      _saveCachedResult('cached_skill_gap', result);
+    }
   }
 
   @override
@@ -93,7 +132,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           ElevatedButton.icon(
             onPressed: _loadProfessions,
             icon: const Icon(Icons.auto_awesome),
-            label: const Text('Подобрать профессии'),
+            label: Text(_professions.isEmpty ? 'Подобрать профессии' : 'Перегенерировать'),
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -125,7 +164,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           ElevatedButton.icon(
             onPressed: _loadCareerPlan,
             icon: const Icon(Icons.timeline),
-            label: const Text('Карьерный план'),
+            label: Text(_careerPlan.isEmpty ? 'Карьерный план' : 'Перегенерировать'),
             style: ElevatedButton.styleFrom(
               backgroundColor: secondaryColor,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -157,7 +196,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           ElevatedButton.icon(
             onPressed: _loadSkillGap,
             icon: const Text('\u{1F4CA}', style: TextStyle(fontSize: 18)),
-            label: Text(_skillGap.isEmpty ? 'Анализ навыков' : 'Обновить анализ'),
+            label: Text(_skillGap.isEmpty ? 'Анализ навыков' : 'Перегенерировать'),
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Theme.of(context).colorScheme.onPrimary,

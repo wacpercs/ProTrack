@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 
 class VacanciesScreen extends StatefulWidget {
@@ -23,8 +25,32 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
   @override
   void initState() {
     super.initState();
+    _loadCachedVacancies();
     _loadSuggestions();
+  }
+
+  Future<void> _loadCachedVacancies() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedJson = prefs.getString('cached_vacancies');
+    final cachedQuery = prefs.getString('cached_vacancy_query');
+    if (cachedJson != null && mounted) {
+      try {
+        final List<dynamic> cached = jsonDecode(cachedJson);
+        setState(() {
+          _vacancies = cached;
+          _isFirstLoad = false;
+          if (cachedQuery != null) _queryController.text = cachedQuery;
+        });
+        return;
+      } catch (_) {}
+    }
     _loadRecommendedVacancies();
+  }
+
+  Future<void> _cacheVacancies(List<dynamic> items, String query) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cached_vacancies', jsonEncode(items));
+    await prefs.setString('cached_vacancy_query', query);
   }
 
   @override
@@ -68,6 +94,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
     try {
       final items = await widget.apiService.getVacanciesScored(defaultQuery, _experience, 0);
       setState(() => _vacancies = items);
+      if (items.isNotEmpty) _cacheVacancies(items, defaultQuery);
       if (items.isEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Нет вакансий по умолчанию, попробуйте другой запрос')),
@@ -77,7 +104,10 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
       print('Scored endpoint failed, falling back: $e');
       try {
         final items = await widget.apiService.getVacancies(defaultQuery, _experience, 0);
-        if (mounted) setState(() => _vacancies = items);
+        if (mounted) {
+          setState(() => _vacancies = items);
+          if (items.isNotEmpty) _cacheVacancies(items, defaultQuery);
+        }
       } catch (e2) {
         print('Ошибка загрузки: $e2');
         if (mounted) {
@@ -108,6 +138,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
     try {
       final items = await widget.apiService.getVacanciesScored(query, _experience, 0);
       setState(() => _vacancies = items);
+      if (items.isNotEmpty) _cacheVacancies(items, query);
       if (items.isEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Ничего не найдено. Попробуйте другой запрос или опыт')),
@@ -123,6 +154,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
         final items = await widget.apiService.getVacancies(query, _experience, 0);
         if (mounted) {
           setState(() => _vacancies = items);
+          if (items.isNotEmpty) _cacheVacancies(items, query);
           if (items.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Ничего не найдено. Попробуйте другой запрос или опыт')),
