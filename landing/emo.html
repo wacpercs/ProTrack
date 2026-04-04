@@ -1026,6 +1026,198 @@
             text-shadow: 0 0 10px rgba(255, 69, 180, 0.3);
         }
 
+        /* === SUFFERING COUNTER === */
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .counter-card {
+            background: #0f0f0f;
+            border: 1px solid #1e1e1e;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .counter-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff2d6f, transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .counter-card:hover::before { opacity: 1; }
+
+        .counter-card:hover {
+            border-color: rgba(255, 45, 111, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(255, 45, 111, 0.1);
+        }
+
+        .counter-num {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 2.5rem;
+            color: #ff2d6f;
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(255, 45, 111, 0.4);
+        }
+
+        .counter-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+        }
+
+        .counter-icon {
+            margin-top: 12px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* === EMO DIARY === */
+        .diary-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .diary-entry {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-left: 3px solid #ff2d6f;
+            padding: 20px 24px;
+            position: relative;
+            transition: all 0.4s ease;
+            font-family: 'Caveat', cursive;
+        }
+
+        .diary-entry:hover {
+            border-color: rgba(255, 45, 111, 0.5);
+            border-left-color: #ff2d6f;
+            transform: rotate(0deg) !important;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3), 0 0 15px rgba(255, 45, 111, 0.08);
+        }
+
+        .diary-date {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: #ff2d6f;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .diary-text {
+            font-size: 1.1rem;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        .diary-mood {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: #333;
+            transition: color 0.3s;
+        }
+
+        .diary-entry:hover .diary-mood { color: #ff2d6f; }
+
+        /* === CLIPPY === */
+        .clippy-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9990;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .clippy-bubble {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 12px 16px;
+            max-width: 240px;
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #c9c9c9;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s, transform 0.4s;
+            pointer-events: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .clippy-bubble.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .clippy-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 30px;
+            width: 0; height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #1a1a1a;
+        }
+
+        .clippy-bubble .accent { color: #ff2d6f; }
+
+        .clippy-agent {
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.3s;
+            animation: clippyBounce 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 45, 111, 0.3));
+            image-rendering: pixelated;
+        }
+
+        .clippy-agent:hover {
+            transform: scale(1.15);
+        }
+
+        .clippy-close {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+        .clippy-close:hover { color: #ff2d6f; }
+
+        @keyframes clippyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
         /* === TECH STACK === */
         .tech-grid {
             display: flex;
@@ -1592,6 +1784,81 @@
         - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
     </div>
 
+    <!-- SUFFERING COUNTER -->
+    <section id="counter" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: 0.5deg;">Статистика страданий</h2>
+            <p class="section-subtitle reveal">цифры, которые <span class="strikethrough">вдохновляют</span> ранят</p>
+
+            <div class="counter-grid" id="sufferingCounters">
+                <div class="counter-card reveal">
+                    <div class="counter-num" data-target="147" data-suffix="">0</div>
+                    <div class="counter-label">откликов в пустоту</div>
+                    <div class="counter-icon"><i class="fas fa-paper-plane"></i></div>
+                </div>
+                <div class="counter-card reveal">
+                    <div class="counter-num" data-target="3" data-suffix=" AM">0</div>
+                    <div class="counter-label">среднее время поиска вакансий</div>
+                    <div class="counter-icon"><i class="fas fa-moon"></i></div>
+                </div>
+                <div class="counter-card reveal">
+                    <div class="counter-num" data-target="42" data-suffix="%">0</div>
+                    <div class="counter-label">шанс ответа на отклик</div>
+                    <div class="counter-icon"><i class="fas fa-heart-crack"></i></div>
+                </div>
+                <div class="counter-card reveal">
+                    <div class="counter-num" data-target="99" data-suffix=".1%">0</div>
+                    <div class="counter-label">точность AI-анализа</div>
+                    <div class="counter-icon"><i class="fas fa-brain"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- EMO DIARY -->
+    <section id="diary" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: -0.7deg;">Карьерный дневник</h2>
+            <p class="section-subtitle reveal">записи, которые мы <span class="strikethrough">не</span> писали в 3 ночи</p>
+
+            <div class="diary-entries">
+                <div class="diary-entry reveal" style="transform: rotate(-0.8deg);">
+                    <div class="diary-date">День 1</div>
+                    <div class="diary-text">Установил ProTrack. Заполнил профиль. Пока ничего не болит. Подозрительно.</div>
+                    <div class="diary-mood"><i class="fas fa-meh"></i></div>
+                </div>
+                <div class="diary-entry reveal" style="transform: rotate(0.5deg);">
+                    <div class="diary-date">День 3</div>
+                    <div class="diary-text">AI сказал, что мне подходит профессия "Junior-разработчик". Я думал, я хотя бы Middle в своих страданиях.</div>
+                    <div class="diary-mood"><i class="fas fa-sad-tear"></i></div>
+                </div>
+                <div class="diary-entry reveal" style="transform: rotate(-0.3deg);">
+                    <div class="diary-date">День 7</div>
+                    <div class="diary-text">Получил первый отклик! Оказалось, это автоответ. Но я всё равно заплакал от радости.</div>
+                    <div class="diary-mood"><i class="fas fa-face-sad-cry"></i></div>
+                </div>
+                <div class="diary-entry reveal" style="transform: rotate(0.7deg);">
+                    <div class="diary-date">День 14</div>
+                    <div class="diary-text">Прошёл собеседование с AI-тренажёром. Он поставил мне 87%. Это больше, чем кто-либо верил в меня.</div>
+                    <div class="diary-mood"><i class="fas fa-heart"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="emo-quote reveal">
+        может быть, настоящий оффер —<br>
+        это друзья, которых мы нашли по пути
+    </div>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
     <!-- TECH STACK -->
     <section id="tech" class="parallax-section">
         <div class="container">
@@ -1722,7 +1989,67 @@
         </p>
     </footer>
 
+    <!-- CLIPPY EMO ASSISTANT -->
+    <div class="clippy-container" id="clippyContainer">
+        <div class="clippy-bubble" id="clippyBubble">
+            <span class="clippy-close" onclick="dismissClippy()">&times;</span>
+            <span id="clippyText"></span>
+        </div>
+        <img class="clippy-agent" id="clippyAgent"
+             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='16' y='4' width='32' height='56' rx='16' fill='%23444' stroke='%23666' stroke-width='2'/%3E%3Cellipse cx='32' cy='24' rx='12' ry='14' fill='%23555'/%3E%3Ccircle cx='26' cy='22' r='4' fill='%23fff'/%3E%3Ccircle cx='38' cy='22' r='4' fill='%23fff'/%3E%3Ccircle cx='27' cy='21' r='2' fill='%23111'/%3E%3Ccircle cx='39' cy='21' r='2' fill='%23111'/%3E%3Cellipse cx='32' cy='30' rx='4' ry='2' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3Crect x='26' y='42' width='4' height='12' rx='2' fill='%23666' transform='rotate(-15 28 48)'/%3E%3Crect x='34' y='42' width='4' height='12' rx='2' fill='%23666' transform='rotate(15 36 48)'/%3E%3Cpath d='M22 8 Q20 0 24 2' stroke='%23ff2d6f' fill='none' stroke-width='2'/%3E%3Cpath d='M42 8 Q44 0 40 2' stroke='%23ff2d6f' fill='none' stroke-width='2'/%3E%3C/svg%3E"
+             alt="Clippy"
+             onclick="nextClippyMessage()"
+             title="Кликни для совета" />
+    </div>
+
     <script>
+    // === CLIPPY EMO ASSISTANT ===
+    (function() {
+        var messages = [
+            'Похоже, ты ищешь <span class="accent">работу мечты</span>. Хочешь, я помогу тебе пострадать?',
+            'Я заметил, что ты не заполнил профиль. Как и <span class="accent">пустоту</span> внутри.',
+            'Совет дня: отправь ещё 10 откликов. Слёзы — <span class="accent">бесплатная смазка</span> для клавиатуры.',
+            'Ты уже 3 минуты на сайте. Это дольше, чем <span class="accent">большинство моих отношений</span>.',
+            'Факт: 87% пользователей ProTrack <span class="accent">нашли работу</span>. Остальные нашли себя.',
+            'Хочешь создать <span class="accent">резюме</span>? Я могу подержать тебя за руку. У меня их нет, но я постараюсь.',
+            'Не грусти. Даже у <span class="accent">Senior-разработчиков</span> бывает импостер-синдром.',
+            'Помни: каждый отказ — это шаг к <span class="accent">офферу</span>. Или к нервному срыву. Посмотрим.',
+        ];
+        var idx = 0;
+        var bubble = document.getElementById('clippyBubble');
+        var textEl = document.getElementById('clippyText');
+        var dismissed = false;
+
+        function showMessage(i) {
+            if (dismissed) return;
+            textEl.innerHTML = messages[i % messages.length];
+            bubble.classList.add('visible');
+        }
+
+        // Show first message after 3s
+        setTimeout(function() { showMessage(0); }, 3000);
+
+        // Auto-cycle every 12s
+        setInterval(function() {
+            if (dismissed) return;
+            idx++;
+            bubble.classList.remove('visible');
+            setTimeout(function() { showMessage(idx); }, 400);
+        }, 12000);
+
+        window.nextClippyMessage = function() {
+            idx++;
+            dismissed = false;
+            bubble.classList.remove('visible');
+            setTimeout(function() { showMessage(idx); }, 200);
+        };
+
+        window.dismissClippy = function() {
+            dismissed = true;
+            bubble.classList.remove('visible');
+        };
+    })();
+
     (function() {
         // === FLOATING PARTICLES ===
         var container = document.getElementById('particles');
@@ -1791,6 +2118,34 @@
                 });
             }, { threshold: 0.5 });
             dividers.forEach(function(d) { divObs.observe(d); });
+        }
+
+        // === SUFFERING COUNTERS ===
+        var counterSection = document.getElementById('sufferingCounters');
+        if (counterSection && 'IntersectionObserver' in window) {
+            var counterObs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        var nums = e.target.querySelectorAll('.counter-num');
+                        nums.forEach(function(el) {
+                            var target = parseInt(el.dataset.target);
+                            var suffix = el.dataset.suffix || '';
+                            var duration = 2000;
+                            var start = performance.now();
+                            function tick(now) {
+                                var elapsed = now - start;
+                                var progress = Math.min(elapsed / duration, 1);
+                                var ease = 1 - Math.pow(1 - progress, 3);
+                                el.textContent = Math.round(target * ease) + suffix;
+                                if (progress < 1) requestAnimationFrame(tick);
+                            }
+                            requestAnimationFrame(tick);
+                        });
+                        counterObs.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            counterObs.observe(counterSection);
         }
 
         // === PARALLAX on scroll ===
