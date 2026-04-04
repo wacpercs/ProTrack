@@ -1188,8 +1188,8 @@
         .clippy-bubble .accent { color: #ff2d6f; }
 
         .clippy-agent {
-            width: 64px;
-            height: 64px;
+            width: 124px;
+            height: 130px;
             cursor: pointer;
             pointer-events: auto;
             transition: transform 0.3s;
@@ -1995,11 +1995,35 @@
             <span class="clippy-close" onclick="dismissClippy()">&times;</span>
             <span id="clippyText"></span>
         </div>
-        <img class="clippy-agent" id="clippyAgent"
-             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='16' y='4' width='32' height='56' rx='16' fill='%23444' stroke='%23666' stroke-width='2'/%3E%3Cellipse cx='32' cy='24' rx='12' ry='14' fill='%23555'/%3E%3Ccircle cx='26' cy='22' r='4' fill='%23fff'/%3E%3Ccircle cx='38' cy='22' r='4' fill='%23fff'/%3E%3Ccircle cx='27' cy='21' r='2' fill='%23111'/%3E%3Ccircle cx='39' cy='21' r='2' fill='%23111'/%3E%3Cellipse cx='32' cy='30' rx='4' ry='2' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3Crect x='26' y='42' width='4' height='12' rx='2' fill='%23666' transform='rotate(-15 28 48)'/%3E%3Crect x='34' y='42' width='4' height='12' rx='2' fill='%23666' transform='rotate(15 36 48)'/%3E%3Cpath d='M22 8 Q20 0 24 2' stroke='%23ff2d6f' fill='none' stroke-width='2'/%3E%3Cpath d='M42 8 Q44 0 40 2' stroke='%23ff2d6f' fill='none' stroke-width='2'/%3E%3C/svg%3E"
-             alt="Clippy"
-             onclick="nextClippyMessage()"
-             title="Кликни для совета" />
+        <svg class="clippy-agent" id="clippyAgent" onclick="nextClippyMessage()" title="Кликни для совета" viewBox="0 0 124 130" xmlns="http://www.w3.org/2000/svg">
+            <!-- Classic Clippy paperclip shape -->
+            <!-- Outer wire -->
+            <path d="M62 8 C62 8 28 8 28 38 L28 92 C28 108 38 118 52 118 C66 118 76 108 76 92 L76 42 C76 30 70 24 62 24 C54 24 48 30 48 42 L48 86"
+                  fill="none" stroke="#8c8c8c" stroke-width="8" stroke-linecap="round"/>
+            <!-- Inner wire highlight -->
+            <path d="M62 8 C62 8 28 8 28 38 L28 92 C28 108 38 118 52 118 C66 118 76 108 76 92 L76 42 C76 30 70 24 62 24 C54 24 48 30 48 42 L48 86"
+                  fill="none" stroke="#b8b8b8" stroke-width="4" stroke-linecap="round"/>
+            <!-- Shine on wire -->
+            <path d="M62 10 C62 10 32 10 32 38 L32 72"
+                  fill="none" stroke="#d8d8d8" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+            <!-- Eyes -->
+            <ellipse cx="46" cy="46" rx="9" ry="11" fill="white" stroke="#888" stroke-width="1.5"/>
+            <ellipse cx="70" cy="46" rx="9" ry="11" fill="white" stroke="#888" stroke-width="1.5"/>
+            <!-- Pupils -->
+            <circle cx="48" cy="48" r="4" fill="#222"/>
+            <circle cx="72" cy="48" r="4" fill="#222"/>
+            <!-- Eye shine -->
+            <circle cx="50" cy="45" r="1.5" fill="white"/>
+            <circle cx="74" cy="45" r="1.5" fill="white"/>
+            <!-- Eyebrows (slightly sad) -->
+            <path d="M38 34 Q46 30 54 35" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M62 35 Q70 30 78 34" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Emo tear -->
+            <ellipse cx="80" cy="56" rx="3" ry="4" fill="rgba(255,45,111,0.6)">
+                <animate attributeName="cy" values="56;62;56" dur="2.5s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2.5s" repeatCount="indefinite"/>
+            </ellipse>
+        </svg>
     </div>
 
     <script>
