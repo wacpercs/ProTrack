@@ -111,6 +111,11 @@ class ProfileData(BaseModel):
     education: str
     interests: str
     skills: str
+    theme: str = "breaking"
+
+
+class ThemeData(BaseModel):
+    theme: str  # "breaking" or "emo"
 
 
 class ChatMessage(BaseModel):
@@ -191,8 +196,26 @@ async def save_profile(data: ProfileData, authorization: str = Header(None)):
         education=data.education,
         interests=data.interests,
         skills=data.skills,
+        theme=data.theme,
     )
     return {"ok": True}
+
+
+@router.post("/theme")
+async def set_theme(data: ThemeData, authorization: str = Header(None)):
+    uid = get_user_id(authorization)
+    if data.theme not in ("breaking", "emo"):
+        raise HTTPException(400, "Theme must be 'breaking' or 'emo'")
+    await db_service.save_user(tg_id=uid, theme=data.theme)
+    return {"ok": True, "theme": data.theme}
+
+
+@router.get("/theme")
+async def get_theme(authorization: str = Header(None)):
+    uid = get_user_id(authorization)
+    user = await db_service.get_user(uid)
+    theme = (user or {}).get("theme", "breaking")
+    return {"theme": theme}
 
 
 @router.get("/professions")

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     skills TEXT,
     recommended_professions TEXT,
     career_plan TEXT,
+    theme TEXT DEFAULT 'breaking',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """
@@ -35,6 +36,11 @@ async def init_db():
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(CREATE_USERS)
         await db.execute(CREATE_HISTORY)
+        # Migrate: add theme column if missing
+        cursor = await db.execute("PRAGMA table_info(users)")
+        columns = [row[1] for row in await cursor.fetchall()]
+        if "theme" not in columns:
+            await db.execute("ALTER TABLE users ADD COLUMN theme TEXT DEFAULT 'breaking'")
         await db.commit()
 
 
