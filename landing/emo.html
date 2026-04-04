@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrack AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Share+Tech+Mono&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* === RESET & BASE === */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        html {
+            overflow-x: hidden;
+        }
+        body {
+            background: #0d0d0d;
+            color: #c9c9c9;
+            font-family: 'Share Tech Mono', monospace;
+            cursor: crosshair;
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background 0.5s, color 0.5s;
+            max-width: 100vw;
+        }
+
+        body.extra-sad {
+            background: #050000;
+            color: #8a6666;
+        }
+        body.extra-sad .hero::before {
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(180, 0, 0, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(100, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(80, 0, 0, 0.08) 0%, transparent 40%);
+        }
+        body.extra-sad .feature-card,
+        body.extra-sad .phone-frame,
+        body.extra-sad .team-card,
+        body.extra-sad .tech-item {
+            background: #0a0000;
+            border-color: #2a0000;
+        }
+        body.extra-sad .section-subtitle,
+        body.extra-sad .emo-quote,
+        body.extra-sad .step p,
+        body.extra-sad .feature-card p,
+        body.extra-sad .emo-list li,
+        body.extra-sad .platform-label,
+        body.extra-sad .team-card .flavor {
+            color: #553333;
+        }
+        body.extra-sad footer { border-color: #2a0000; }
+        body.extra-sad .checkered {
+            background-image:
+                linear-gradient(45deg, #1a0000 25%, transparent 25%),
+                linear-gradient(-45deg, #1a0000 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #1a0000 75%),
+                linear-gradient(-45deg, transparent 75%, #1a0000 75%);
+        }
+
+        ::selection {
+            background: #ff2d6f;
+            color: #0d0d0d;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0d0d0d; }
+        ::-webkit-scrollbar-thumb { background: #ff2d6f; border-radius: 0; }
+
+        /* === VIGNETTE OVERLAY === */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+        }
+
+        /* === DARK MODE TOGGLE === */
+        .dark-toggle {
+            position: fixed;
+            top: 60px;
+            right: 12px;
+            z-index: 9999;
+            background: rgba(255, 45, 111, 0.15);
+            border: 1px solid rgba(255, 45, 111, 0.4);
+            color: #ff2d6f;
+            padding: 6px 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            white-space: nowrap;
+            max-width: calc(100vw - 24px);
+        }
+        .dark-toggle:hover {
+            background: rgba(255, 45, 111, 0.3);
+            box-shadow: 0 0 20px rgba(255, 45, 111, 0.3);
+        }
+
+        /* === STICKY HEADER === */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: rgba(13, 13, 13, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 45, 111, 0.15);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.extra-sad .sticky-header {
+            background: rgba(5, 0, 0, 0.8);
+            border-bottom-color: rgba(180, 0, 0, 0.3);
+        }
+        .sticky-header.visible { transform: translateY(0); }
+        .sticky-header .logo-text {
+            font-family: 'Permanent Marker', cursive;
+            color: #ff2d6f;
+            font-size: 1rem;
+        }
+        .sticky-header nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+        .sticky-header nav a:hover { color: #ff2d6f; }
+
+        /* === FLOATING PARTICLES === */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            opacity: 0;
+            animation: particleFloat linear infinite;
+            color: #ff2d6f;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.2; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* === RAIN / TEARS ON HERO === */
+        .rain-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .raindrop {
+            position: absolute;
+            top: -20px;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 45, 111, 0.3), transparent);
+            animation: rainFall linear infinite;
+            opacity: 0;
+        }
+        @keyframes rainFall {
+            0% { transform: translateY(-20px); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 0.3; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* === CHECKERED PATTERN (animated) === */
+        .checkered {
+            background-image:
+                linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+                linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #1a1a1a 75%),
+                linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            padding: 8px;
+            animation: checkeredMove 8s linear infinite;
+        }
+        @keyframes checkeredMove {
+            0% { background-position: 0 0, 0 10px, 10px -10px, -10px 0px; }
+            100% { background-position: 20px 20px, 20px 30px, 30px 10px, 10px 20px; }
+        }
+
+        /* === TEARS ANIMATION === */
+        @keyframes tear-drop {
+            0% { top: -8px; opacity: 0; }
+            10% { opacity: 1; }
+            100% { top: 60px; opacity: 0; }
+        }
+
+        @keyframes tear-drop-long {
+            0% { top: -8px; opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { top: 90px; opacity: 0; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 45, 111, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 45, 111, 0.6), 0 0 60px rgba(255, 45, 111, 0.2); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes drip-expand {
+            0% { transform: scaleY(1) translateX(-50%); }
+            50% { transform: scaleY(1.8) translateX(-50%); }
+            100% { transform: scaleY(1) translateX(-50%); }
+        }
+
+        @keyframes heartbeat-intense {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,45,111,0.3)); }
+            10% { transform: scale(1.15); filter: drop-shadow(0 0 25px rgba(255,45,111,0.7)); }
+            20% { transform: scale(0.95); filter: drop-shadow(0 0 5px rgba(255,45,111,0.2)); }
+            30% { transform: scale(1.12); filter: drop-shadow(0 0 20px rgba(255,45,111,0.6)); }
+            50% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,45,111,0.3)); }
+        }
+
+        @keyframes static-noise {
+            0% { background-position: 0 0; }
+            100% { background-position: 100% 100%; }
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === GLITCH EFFECT === */
+        @keyframes glitch1 {
+            0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+            20% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+            40% { clip-path: inset(60% 0 10% 0); transform: translate(3px, -1px); }
+            60% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, 1px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(2px, -2px); }
+        }
+        @keyframes glitch2 {
+            0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+            20% { clip-path: inset(70% 0 5% 0); transform: translate(4px, -1px); }
+            40% { clip-path: inset(15% 0 55% 0); transform: translate(-4px, 2px); }
+            60% { clip-path: inset(50% 0 20% 0); transform: translate(2px, -3px); }
+            80% { clip-path: inset(5% 0 80% 0); transform: translate(-3px, 1px); }
+        }
+        .glitch-title {
+            position: relative;
+            display: inline-block;
+        }
+        .glitch-title::before,
+        .glitch-title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .glitch-title::before {
+            color: #ff004d;
+            animation: glitch1 3s infinite linear alternate-reverse;
+            z-index: -1;
+        }
+        .glitch-title::after {
+            color: #00ffff;
+            animation: glitch2 2.5s infinite linear alternate-reverse;
+            z-index: -1;
+        }
+
+        /* === TYPING CURSOR === */
+        .typing-cursor::after {
+            content: '|';
+            display: inline-block;
+            animation: blink 0.7s step-end infinite;
+            color: #ff2d6f;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* === SCROLL REVEAL === */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === PARALLAX === */
+        .parallax-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .parallax-bg {
+            position: absolute;
+            inset: -60px 0;
+            background-size: cover;
+            will-change: transform;
+            z-index: -1;
+        }
+
+        /* === TYPOGRAPHY === */
+        h1, h2, h3 { font-family: 'Permanent Marker', cursive; }
+
+        .handwritten { font-family: 'Caveat', cursive; }
+
+        .tear-header {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tear-header::after {
+            content: '';
+            position: absolute;
+            left: 20%;
+            width: 3px;
+            height: 8px;
+            background: linear-gradient(to bottom, #ff2d6f, transparent);
+            border-radius: 0 0 50% 50%;
+            animation: tear-drop 2.5s ease-in infinite;
+        }
+
+        .tear-header::before {
+            content: '';
+            position: absolute;
+            left: 65%;
+            width: 3px;
+            height: 8px;
+            background: linear-gradient(to bottom, #ff2d6f, transparent);
+            border-radius: 0 0 50% 50%;
+            animation: tear-drop-long 3.2s ease-in 0.8s infinite;
+        }
+
+        .strikethrough { text-decoration: line-through; text-decoration-color: #ff2d6f; }
+
+        /* === BROKEN HEART DIVIDER (animated crack) === */
+        .heart-divider {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 1.4rem;
+            color: #ff2d6f;
+            opacity: 0.6;
+            letter-spacing: 12px;
+            user-select: none;
+        }
+
+        .heart-divider .broken-heart {
+            display: inline-block;
+            position: relative;
+            font-style: normal;
+            transition: all 0.6s ease;
+        }
+
+        .heart-divider .broken-heart .heart-left,
+        .heart-divider .broken-heart .heart-right {
+            display: inline-block;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s;
+        }
+        .heart-divider.cracked .heart-left {
+            transform: translateX(-6px) rotate(-15deg);
+            opacity: 0.6;
+        }
+        .heart-divider.cracked .heart-right {
+            transform: translateX(6px) rotate(15deg);
+            opacity: 0.6;
+        }
+
+        /* === QUOTE BLOCKS === */
+        .emo-quote {
+            text-align: center;
+            padding: 30px 20px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            color: #666;
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            transform: rotate(-0.5deg);
+        }
+
+        .emo-quote::before {
+            content: '~';
+            display: block;
+            font-size: 2rem;
+            color: #ff2d6f;
+            margin-bottom: 8px;
+        }
+
+        .emo-quote::after {
+            content: '~';
+            display: block;
+            font-size: 2rem;
+            color: #ff2d6f;
+            margin-top: 8px;
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* === HERO === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(255, 45, 111, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(180, 0, 40, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 45, 111, 0.04) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .hero-bleeding-heart {
+            position: relative;
+            width: 80px;
+            height: 72px;
+            margin: 0 auto 30px;
+            animation: heartbeat-intense 1.5s ease-in-out infinite;
+        }
+
+        .hero-bleeding-heart::before,
+        .hero-bleeding-heart::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 52px;
+            height: 80px;
+            border-radius: 52px 52px 0 0;
+            background: linear-gradient(180deg, #ff2d6f 0%, #8b0020 100%);
+        }
+
+        .hero-bleeding-heart::before {
+            left: 40px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .hero-bleeding-heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart-crack {
+            position: absolute;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 30px;
+            background: #0d0d0d;
+            z-index: 2;
+        }
+
+        .heart-crack::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: -4px;
+            width: 10px;
+            height: 3px;
+            background: #0d0d0d;
+            transform: rotate(-25deg);
+        }
+
+        .heart-crack::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: -2px;
+            width: 8px;
+            height: 3px;
+            background: #0d0d0d;
+            transform: rotate(20deg);
+        }
+
+        .heart-drip {
+            position: absolute;
+            bottom: -20px;
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to bottom, #8b0020, transparent);
+            border-radius: 0 0 50% 50%;
+            z-index: 3;
+        }
+
+        .heart-drip:nth-child(2) { left: 35%; animation: tear-drop 3s ease-in 0.3s infinite; }
+        .heart-drip:nth-child(3) { left: 50%; animation: tear-drop-long 2.8s ease-in infinite; }
+        .heart-drip:nth-child(4) { left: 62%; animation: tear-drop 3.5s ease-in 1s infinite; }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 7vw, 4.5rem);
+            color: #fff;
+            text-shadow: 0 0 40px rgba(255, 45, 111, 0.4), 3px 3px 0 #1a0008;
+            transform: rotate(-1.5deg);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: #ff2d6f;
+            margin-bottom: 40px;
+            transform: rotate(0.8deg);
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .hero-tag {
+            background: rgba(255, 45, 111, 0.1);
+            border: 1px solid rgba(255, 45, 111, 0.3);
+            color: #ff2d6f;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transform: rotate(var(--r, 0deg));
+        }
+
+        .hero-tag:nth-child(1) { --r: -1deg; }
+        .hero-tag:nth-child(2) { --r: 0.5deg; }
+        .hero-tag:nth-child(3) { --r: -0.8deg; }
+
+        /* === CTA BUTTON with SVG drips === */
+        .btn-emo {
+            display: inline-block;
+            padding: 16px 48px;
+            background: linear-gradient(180deg, #ff2d6f 0%, #cc0040 100%);
+            color: #fff;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border: none;
+            position: relative;
+            cursor: crosshair;
+            transition: all 0.3s ease;
+            transform: rotate(-0.5deg);
+            letter-spacing: 1px;
+        }
+
+        .btn-emo .drip-svg {
+            position: absolute;
+            bottom: -24px;
+            left: 0;
+            width: 100%;
+            height: 28px;
+            pointer-events: none;
+            overflow: visible;
+        }
+        .btn-emo .drip-svg .drip-path {
+            fill: #cc0040;
+            opacity: 0;
+            transition: opacity 0.4s ease, d 0.6s ease;
+        }
+        .btn-emo:hover .drip-svg .drip-path {
+            opacity: 1;
+        }
+
+        .btn-emo:hover {
+            transform: rotate(-0.5deg) scale(1.04);
+            box-shadow: 0 0 30px rgba(255, 45, 111, 0.5), 0 0 60px rgba(255, 45, 111, 0.2);
+        }
+
+        .btn-emo-outline {
+            display: inline-block;
+            padding: 14px 40px;
+            background: transparent;
+            color: #ff2d6f;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border: 2px solid #ff2d6f;
+            position: relative;
+            cursor: crosshair;
+            transition: all 0.3s ease;
+            transform: rotate(0.5deg);
+        }
+
+        .btn-emo-outline:hover {
+            background: rgba(255, 45, 111, 0.1);
+            box-shadow: 0 0 20px rgba(255, 45, 111, 0.3);
+            transform: rotate(0.5deg) scale(1.04);
+        }
+
+        /* === SECTIONS === */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            color: #fff;
+            margin-bottom: 16px;
+            transform: rotate(var(--r, -1deg));
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 56px;
+        }
+
+        /* === HOW IT WORKS === */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            padding: 32px 20px;
+            position: relative;
+            transform: rotate(var(--r, 0deg));
+        }
+
+        .step:nth-child(1) { --r: -1.2deg; }
+        .step:nth-child(2) { --r: 0.8deg; }
+        .step:nth-child(3) { --r: -0.6deg; }
+        .step:nth-child(4) { --r: 1deg; }
+
+        .step-number {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 3rem;
+            color: #ff2d6f;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            color: #ff2d6f;
+            margin-bottom: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .step:nth-child(2) .step-icon { animation-delay: 0.5s; }
+        .step:nth-child(3) .step-icon { animation-delay: 1s; }
+        .step:nth-child(4) .step-icon { animation-delay: 1.5s; }
+
+        .step h3 {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            font-size: 0.85rem;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        .step-connector {
+            display: none;
+        }
+
+        /* === FEATURES (3D FLIP CARDS) === */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+        }
+
+        .flip-card {
+            perspective: 1000px;
+            height: 320px;
+            transform: rotate(var(--r, 0deg));
+        }
+        .flip-card:nth-child(1) { --r: -0.7deg; }
+        .flip-card:nth-child(2) { --r: 0.5deg; }
+        .flip-card:nth-child(3) { --r: -0.3deg; }
+        .flip-card:nth-child(4) { --r: 0.8deg; }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, #111 0%, #0d0d0d 100%);
+            border: 1px solid #1e1e1e;
+            padding: 36px 28px;
+            overflow: hidden;
+        }
+        .flip-card-front::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff2d6f, transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .flip-card:hover .flip-card-front::before { opacity: 1; }
+
+        .flip-card-back {
+            background: linear-gradient(135deg, #1a0010 0%, #0d0d0d 100%);
+            border: 1px solid rgba(255, 45, 111, 0.3);
+            padding: 36px 28px;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: inset 0 0 40px rgba(255, 45, 111, 0.05);
+        }
+        .flip-card-back h3 {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.1rem;
+            color: #ff2d6f;
+            margin-bottom: 14px;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: #ff2d6f;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3,
+        .flip-card-front h3 {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p,
+        .flip-card-front p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* star/x bullet list */
+        .emo-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .emo-list li {
+            padding: 6px 0 6px 24px;
+            position: relative;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .emo-list li::before {
+            position: absolute;
+            left: 0;
+            color: #ff2d6f;
+            font-size: 0.85rem;
+        }
+
+        .emo-list li:nth-child(odd)::before { content: '\2605'; }
+        .emo-list li:nth-child(even)::before { content: '\2717'; }
+
+        /* === PLATFORMS / PHONE FRAMES === */
+        .platforms-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            padding: 20px 0;
+        }
+
+        .platform-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 500px;
+            background: #1a1a1a;
+            border: 3px solid #333;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 45, 63, 0.15), 0 20px 60px rgba(0,0,0,0.6);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: rotate(var(--phone-r, 0deg));
+        }
+
+        .platform-item:nth-child(1) .phone-frame { --phone-r: -2deg; }
+        .platform-item:nth-child(2) .phone-frame { --phone-r: 0deg; }
+        .platform-item:nth-child(3) .phone-frame { --phone-r: 2deg; }
+
+        .phone-frame:hover {
+            transform: rotate(0deg) scale(1.04);
+            box-shadow: 0 0 50px rgba(255, 45, 63, 0.3), 0 30px 80px rgba(0,0,0,0.7);
+            border-color: #ff2d3f;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #111;
+            border-radius: 0 0 18px 18px;
+            z-index: 10;
+            border-bottom: 1px solid #222;
+        }
+
+        .phone-notch::before {
+            content: '';
+            position: absolute;
+            top: 9px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #222;
+            border-radius: 50%;
+        }
+
+        .phone-dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 28px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 10;
+        }
+
+        .android-status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 26px;
+            background: rgba(0,0,0,0.6);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 0.6rem;
+            color: #aaa;
+            font-family: 'Roboto', 'Courier New', monospace;
+        }
+
+        .android-status-bar .status-left { display: flex; gap: 4px; }
+        .android-status-bar .status-right { display: flex; gap: 6px; align-items: center; }
+        .android-status-bar .battery { width: 16px; height: 8px; border: 1px solid #aaa; border-radius: 2px; position: relative; }
+        .android-status-bar .battery::after { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px; background: #ff69b4; border-radius: 1px; }
+        .android-status-bar .battery::before { content: ''; position: absolute; right: -3px; top: 50%; transform: translateY(-50%); width: 2px; height: 4px; background: #aaa; border-radius: 0 1px 1px 0; }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Telegram Bot screen --- */
+        .tg-screen { background: #0e1621; padding: 40px 12px 12px; display: flex; flex-direction: column; height: 100%; }
+        .tg-header { background: #17212b; padding: 8px 12px; border-radius: 0; display: flex; align-items: center; gap: 10px; margin: -40px -12px 8px; padding-top: 36px; }
+        .tg-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #ff2d3f, #ff69b4); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; font-weight: bold; flex-shrink: 0; }
+        .tg-header-info { display: flex; flex-direction: column; }
+        .tg-bot-name { font-size: 0.75rem; color: #fff; font-weight: 600; }
+        .tg-bot-status { font-size: 0.6rem; color: #6c7883; }
+        .tg-messages { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; padding: 8px 0; }
+        .tg-msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 0.65rem; line-height: 1.4; }
+        .tg-msg-bot { background: #182533; color: #d4d8dc; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .tg-msg-user { background: #2b5278; color: #e8ecf0; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .tg-msg-accent { color: #ff69b4; font-weight: 600; }
+        .tg-buttons { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+        .tg-btn { background: rgba(255, 45, 63, 0.12); border: 1px solid rgba(255, 69, 180, 0.3); color: #ff69b4; padding: 6px 10px; border-radius: 8px; font-size: 0.6rem; text-align: center; cursor: default; }
+        .tg-input-bar { background: #17212b; margin: 0 -12px -12px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+        .tg-input { flex: 1; background: #242f3d; border: none; border-radius: 18px; padding: 6px 12px; font-size: 0.6rem; color: #8b97a3; }
+        .tg-send { width: 28px; height: 28px; background: none; border: none; color: #5b9bd5; font-size: 0.8rem; cursor: default; }
+
+        /* --- Mini App screen --- */
+        .app-screen { background: #0a0a0f; padding: 44px 0 0; display: flex; flex-direction: column; height: 100%; }
+        .app-title-bar { text-align: center; padding: 8px 16px 12px; }
+        .app-title { font-family: 'Permanent Marker', cursive; font-size: 1rem; color: #fff; }
+        .app-title-accent { color: #ff2d3f; }
+        .app-content { flex: 1; padding: 0 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        .app-card {
+            background: linear-gradient(135deg, #111 0%, #1a1020 100%);
+            border: 1px solid #222;
+            border-radius: 14px;
+            padding: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255,45,63,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .app-card-title { font-size: 0.7rem; color: #ff69b4; font-weight: 600; margin-bottom: 4px; }
+        .app-card-text { font-size: 0.6rem; color: #666; line-height: 1.4; }
+        .app-card-badge { display: inline-block; font-size: 0.5rem; padding: 2px 8px; background: rgba(255,45,63,0.1); border: 1px solid rgba(255,45,63,0.2); color: #ff2d3f; border-radius: 10px; margin-top: 6px; }
+        .app-navbar { display: flex; justify-content: space-around; padding: 10px 0; background: #111; border-top: 1px solid #1e1e1e; margin-top: auto; }
+        .app-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.5rem; color: #555; }
+        .app-nav-item.active { color: #ff2d3f; }
+        .app-nav-icon { font-size: 0.85rem; }
+
+        /* --- APK / Android screen --- */
+        .apk-screen { background: #0a0a0f; padding: 26px 0 0; display: flex; flex-direction: column; height: 100%; }
+        .apk-toolbar { background: #111; padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1e1e1e; }
+        .apk-back { color: #ff69b4; font-size: 0.8rem; }
+        .apk-toolbar-title { font-size: 0.75rem; color: #fff; font-weight: 600; }
+        .apk-toolbar-dots { margin-left: auto; color: #666; font-size: 0.7rem; letter-spacing: 2px; }
+        .apk-content { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        .apk-card {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 12px;
+            padding: 14px;
+            position: relative;
+        }
+        .apk-card::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(255,69,180,0.1) 0%, transparent 70%);
+        }
+        .apk-card-label { font-size: 0.55rem; color: #ff2d3f; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .apk-card-title { font-size: 0.72rem; color: #ddd; font-weight: 600; margin-bottom: 3px; }
+        .apk-card-desc { font-size: 0.58rem; color: #666; line-height: 1.4; }
+        .apk-progress { height: 3px; background: #1e1e1e; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .apk-progress-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #ff2d3f, #ff69b4); }
+        .apk-fab { position: absolute; bottom: 70px; right: 18px; width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #ff2d3f, #ff69b4); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; box-shadow: 0 4px 20px rgba(255,45,63,0.4); z-index: 5; }
+        .apk-bottom-nav { display: flex; justify-content: space-around; padding: 10px 0; background: #0f0f0f; border-top: 1px solid #1a1a1a; margin-top: auto; }
+        .apk-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.48rem; color: #555; }
+        .apk-nav-item.active { color: #ff69b4; }
+        .apk-nav-icon { font-size: 0.8rem; }
+
+        .platform-label {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.2rem;
+            color: #ff69b4;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 69, 180, 0.3);
+        }
+
+        /* === TECH STACK === */
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            padding: 20px 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            transform: rotate(var(--r, 0deg));
+        }
+
+        .tech-item:nth-child(1) { --r: -1deg; }
+        .tech-item:nth-child(2) { --r: 0.7deg; }
+        .tech-item:nth-child(3) { --r: -0.5deg; }
+        .tech-item:nth-child(4) { --r: 0.9deg; }
+        .tech-item:nth-child(5) { --r: -0.8deg; }
+        .tech-item:nth-child(6) { --r: 0.4deg; }
+
+        .tech-item:hover {
+            border-color: #ff2d6f;
+            box-shadow: 0 0 20px rgba(255, 45, 111, 0.15);
+            transform: rotate(0deg) translateY(-4px);
+        }
+
+        .tech-item i {
+            font-size: 1.6rem;
+            color: #ff2d6f;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tech-item span {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* === TEAM (hover float + glow) === */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 32px 16px;
+            border: 1px solid #1a1a1a;
+            background: #0f0f0f;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: rotate(var(--r, 0deg));
+        }
+
+        .team-card:nth-child(1) { --r: 0.8deg; }
+        .team-card:nth-child(2) { --r: -0.6deg; }
+        .team-card:nth-child(3) { --r: 1deg; }
+        .team-card:nth-child(4) { --r: -0.4deg; }
+        .team-card:nth-child(5) { --r: 0.7deg; }
+
+        .team-card:hover {
+            border-color: rgba(255, 45, 111, 0.5);
+            transform: rotate(0deg) translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255, 45, 111, 0.15), 0 0 60px rgba(255, 45, 111, 0.05);
+        }
+
+        .team-avatar {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #1a1a1a, #222);
+            border: 2px solid #ff2d6f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.5s ease;
+        }
+        .team-card:hover .team-avatar {
+            box-shadow: 0 0 20px rgba(255, 45, 111, 0.4);
+            border-color: #ff5588;
+        }
+
+        .team-card h3 {
+            font-size: 1rem;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+        }
+
+        .team-card .role {
+            font-size: 0.75rem;
+            color: #ff2d6f;
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+        }
+
+        .team-card .flavor {
+            font-size: 0.75rem;
+            color: #444;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* === FOOTER CTA === */
+        .footer-cta {
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .footer-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(255, 45, 111, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .footer-cta h2 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            color: #fff;
+            margin-bottom: 12px;
+            transform: rotate(-1deg);
+        }
+
+        .footer-cta .sub {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 36px;
+        }
+
+        /* === ACTUAL FOOTER === */
+        footer {
+            border-top: 1px solid #1a1a1a;
+            padding: 32px 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #333;
+        }
+
+        footer a {
+            color: #ff2d6f;
+            text-decoration: none;
+        }
+
+        /* === NOISE OVERLAY === */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.5;
+        }
+
+        /* === X MARKS === */
+        .x-marks {
+            text-align: center;
+            color: #222;
+            font-size: 0.8rem;
+            letter-spacing: 8px;
+            padding: 8px 0;
+            user-select: none;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            section { padding: 60px 0; }
+
+            .steps { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+            .features-grid { grid-template-columns: 1fr; }
+            .flip-card { height: auto; min-height: 280px; }
+
+            .platforms-grid { flex-direction: column; align-items: center; gap: 30px; }
+            .phone-frame { width: 260px; height: 470px; }
+
+            .team-grid { grid-template-columns: 1fr 1fr; }
+
+            .hero h1 { transform: rotate(-0.5deg); }
+
+            .emo-quote { font-size: 1.2rem; }
+
+            .checkered { background-size: 14px 14px; background-position: 0 0, 0 7px, 7px -7px, -7px 0px; }
+
+            .sticky-header nav { display: none; }
+            .dark-toggle { top: auto; bottom: 12px; right: 12px; font-size: 0.6rem; padding: 5px 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .steps { grid-template-columns: 1fr; }
+
+            .team-grid { grid-template-columns: 1fr; }
+
+            .tech-grid { gap: 12px; }
+
+            .tech-item { min-width: 110px; padding: 16px 20px; }
+
+            .btn-emo { padding: 14px 32px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIGNETTE -->
+    <div class="vignette"></div>
+
+    <!-- FLOATING PARTICLES -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- DARK MODE TOGGLE -->
+    <button class="dark-toggle" id="darkToggle" onclick="document.body.classList.toggle('extra-sad'); this.textContent = document.body.classList.contains('extra-sad') ? '// extra sad mode ON' : '// sad mode'">// sad mode</button>
+
+    <!-- STICKY HEADER -->
+    <div class="sticky-header" id="stickyHeader">
+        <span class="logo-text"><i class="fas fa-heart-crack" style="margin-right:6px;"></i>ProTrack AI</span>
+        <nav>
+            <a href="#how">Как это работает</a>
+            <a href="#features">Возможности</a>
+            <a href="#platforms">Платформы</a>
+            <a href="#tech">Технологии</a>
+            <a href="#team">Команда</a>
+        </nav>
+    </div>
+
+    <!-- CHECKERED BORDER TOP -->
+    <div class="checkered"></div>
+
+    <!-- HERO -->
+    <section class="hero parallax-section" id="hero">
+        <!-- Rain -->
+        <div class="rain-container" id="heroRain"></div>
+
+        <div class="hero-bleeding-heart">
+            <div class="heart-crack"></div>
+            <div class="heart-drip"></div>
+            <div class="heart-drip"></div>
+            <div class="heart-drip"></div>
+        </div>
+
+        <h1 class="tear-header glitch-title" data-text="ProTrack AI">ProTrack AI</h1>
+        <p class="hero-subtitle typing-cursor">найди себя... или хотя бы работу <span style="display:inline-block; animation: heartbeat-intense 2s infinite;">&#x1F494;</span></p>
+
+        <div class="hero-tags">
+            <span class="hero-tag">Telegram Bot</span>
+            <span class="hero-tag">Mini App</span>
+            <span class="hero-tag">APK</span>
+        </div>
+
+        <a href="https://t.me/RostensteinsFilesBot" class="btn-emo" target="_blank">
+            <i class="fab fa-telegram" style="margin-right:8px;"></i>Запустить бота
+            <svg class="drip-svg" viewBox="0 0 200 28" preserveAspectRatio="none">
+                <path class="drip-path" d="M0,0 Q10,0 10,0 Q12,8 14,18 Q15,22 16,18 Q18,4 20,0 L50,0 Q52,0 52,0 Q54,12 56,24 Q57,28 58,22 Q60,8 62,0 L100,0 Q102,0 102,0 Q103,6 104,14 Q105,18 106,12 Q107,4 108,0 L140,0 Q142,0 142,0 Q144,10 146,20 Q147,24 148,18 Q150,6 152,0 L200,0 L200,0 L0,0 Z" />
+            </svg>
+        </a>
+
+        <div style="margin-top:60px;" class="x-marks">x x x x x x x x x x x x</div>
+    </section>
+
+    <!-- QUOTE 1 -->
+    <div class="emo-quote reveal">
+        между строчек резюме спрятана вся моя боль,<br>
+        но HR всё равно не перезвонит
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: -1.2deg;">Как это работает</h2>
+            <p class="section-subtitle reveal">четыре шага до <span class="strikethrough">счастья</span> трудоустройства</p>
+
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i class="fas fa-pen-nib"></i></div>
+                    <h3>Заполни анкету</h3>
+                    <p>Расскажи о себе, своих навыках и <span class="strikethrough">страданиях</span> интересах</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i class="fas fa-brain"></i></div>
+                    <h3>AI анализирует твою <span class="handwritten" style="color:#ff2d6f;">тёмную душу</span></h3>
+                    <p>DeepSeek AI изучает профиль и подбирает идеальные варианты</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i class="fas fa-map-signs"></i></div>
+                    <h3>Получи карьерный план</h3>
+                    <p>Пошаговая дорожная карта к <span class="strikethrough">смыслу жизни</span> карьере мечты</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Найди вакансии мечты</h3>
+                    <p>Реальные вакансии с hh.ru прямо в Telegram</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE 2 -->
+    <div class="emo-quote reveal">
+        я отправил сотню откликов в пустоту,<br>
+        как сообщения тебе в три ночи
+    </div>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- FEATURES -->
+    <section id="features" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: 0.8deg;">Возможности</h2>
+            <p class="section-subtitle reveal">всё что нужно, чтобы перестать <span class="strikethrough">плакать</span> искать</p>
+
+            <div class="features-grid">
+                <div class="flip-card reveal">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="feature-icon"><i class="fas fa-compass"></i></div>
+                            <h3>Подбор профессий</h3>
+                            <p>AI анализирует твои навыки, интересы и характер, чтобы найти профессию, в которой ты расцветёшь</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Подробнее:</h3>
+                            <ul class="emo-list">
+                                <li>Персональный анализ</li>
+                                <li>100+ направлений</li>
+                                <li>Учёт soft skills</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card reveal">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="feature-icon"><i class="fas fa-route"></i></div>
+                            <h3>Карьерный план</h3>
+                            <p>Детальная дорожная карта: что учить, где практиковаться, куда стремиться</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Подробнее:</h3>
+                            <ul class="emo-list">
+                                <li>Пошаговый roadmap</li>
+                                <li>Рекомендации курсов</li>
+                                <li>Таймлайн развития</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card reveal">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="feature-icon"><i class="fas fa-search"></i></div>
+                            <h3>Поиск вакансий</h3>
+                            <p>Интеграция с hh.ru &mdash; актуальные вакансии подобранные специально для тебя</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Подробнее:</h3>
+                            <ul class="emo-list">
+                                <li>Фильтрация по профилю</li>
+                                <li>Реальные предложения</li>
+                                <li>Быстрый отклик</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card reveal">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                            <h3>AI-чат</h3>
+                            <p>Персональный карьерный консультант, который не осудит и всегда на связи</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Подробнее:</h3>
+                            <ul class="emo-list">
+                                <li>24/7 поддержка</li>
+                                <li>Без осуждения</li>
+                                <li>Конкретные советы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE 3 -->
+    <div class="emo-quote reveal">
+        мой карьерный план написан слезами,<br>
+        но хотя бы он есть
+    </div>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- PLATFORMS -->
+    <section id="platforms" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: -0.6deg;">Доступен везде &#x1F494;</h2>
+            <p class="section-subtitle reveal">выбери свой способ <span class="strikethrough">страдать</span> продуктивно</p>
+
+            <div class="platforms-grid">
+                <!-- Telegram Bot -->
+                <div class="platform-item reveal">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen tg-screen">
+                            <div class="tg-header">
+                                <div class="tg-avatar">AI</div>
+                                <div class="tg-header-info">
+                                    <span class="tg-bot-name">ProTrack AI</span>
+                                    <span class="tg-bot-status">online</span>
+                                </div>
+                            </div>
+                            <div class="tg-messages">
+                                <div class="tg-msg tg-msg-bot">
+                                    Привет! Я <span class="tg-msg-accent">ProTrack AI</span>. Чем могу помочь? &#x1F5A4;
+                                </div>
+                                <div class="tg-msg tg-msg-user">
+                                    Хочу найти работу мечты
+                                </div>
+                                <div class="tg-msg tg-msg-bot">
+                                    Давай посмотрим, что я могу для тебя сделать...
+                                    <div class="tg-buttons">
+                                        <div class="tg-btn"><i class="fa-solid fa-briefcase"></i> Найти вакансии</div>
+                                        <div class="tg-btn"><i class="fa-solid fa-file-lines"></i> Моё резюме</div>
+                                        <div class="tg-btn"><i class="fa-solid fa-brain"></i> AI-консультант</div>
+                                    </div>
+                                </div>
+                                <div class="tg-msg tg-msg-user">
+                                    Найти вакансии &#x1F49C;
+                                </div>
+                                <div class="tg-msg tg-msg-bot">
+                                    Нашла <span class="tg-msg-accent">12 вакансий</span> по твоему профилю...
+                                </div>
+                            </div>
+                            <div class="tg-input-bar">
+                                <div class="tg-input">Сообщение...</div>
+                                <div class="tg-send"><i class="fa-solid fa-paper-plane"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="platform-label">Telegram бот</div>
+                </div>
+
+                <!-- Mini App -->
+                <div class="platform-item reveal">
+                    <div class="phone-frame">
+                        <div class="phone-dynamic-island"></div>
+                        <div class="phone-screen app-screen">
+                            <div class="app-title-bar">
+                                <div class="app-title">PRO<span class="app-title-accent">TRACK</span></div>
+                                <div style="font-size:0.55rem;color:#666;margin-top:2px;">CAREER AI</div>
+                            </div>
+                            <div class="app-content">
+                                <div class="app-card">
+                                    <div class="app-card-title"><i class="fa-solid fa-briefcase" style="margin-right:6px;"></i>Вакансии</div>
+                                    <div class="app-card-text">12 новых предложений по вашему профилю</div>
+                                    <div class="app-card-badge">НОВОЕ</div>
+                                </div>
+                                <div class="app-card">
+                                    <div class="app-card-title"><i class="fa-solid fa-brain" style="margin-right:6px;"></i>AI Анализ</div>
+                                    <div class="app-card-text">Оценка резюме: 87% совместимости</div>
+                                    <div class="app-card-badge">AI</div>
+                                </div>
+                                <div class="app-card">
+                                    <div class="app-card-title"><i class="fa-solid fa-chart-line" style="margin-right:6px;"></i>Трекер</div>
+                                    <div class="app-card-text">3 отклика, 1 приглашение</div>
+                                    <div class="app-card-badge">АКТИВНО</div>
+                                </div>
+                            </div>
+                            <div class="app-navbar">
+                                <div class="app-nav-item active"><i class="fa-solid fa-house"></i> Главная</div>
+                                <div class="app-nav-item"><i class="fa-solid fa-magnifying-glass"></i> Поиск</div>
+                                <div class="app-nav-item"><i class="fa-solid fa-bookmark"></i> Избранное</div>
+                                <div class="app-nav-item"><i class="fa-solid fa-user"></i> Профиль</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="platform-label">Mini App</div>
+                </div>
+
+                <!-- APK -->
+                <div class="platform-item reveal">
+                    <div class="phone-frame">
+                        <div class="android-status-bar">
+                            <div class="status-left">12:42</div>
+                            <div class="status-right">
+                                <span>4G</span>
+                                <span>&#x25BE;&#x25B4;</span>
+                                <div class="battery"></div>
+                            </div>
+                        </div>
+                        <div class="phone-screen apk-screen">
+                            <div class="apk-toolbar">
+                                <span class="apk-back"><i class="fa-solid fa-arrow-left"></i></span>
+                                <span class="apk-toolbar-title">PROTRACK</span>
+                                <span class="apk-toolbar-dots">&#x22EE;</span>
+                            </div>
+                            <div class="apk-content">
+                                <div class="apk-card" style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,45,63,0.12);display:flex;align-items:center;justify-content:center;color:#ff69b4;font-size:0.8rem;flex-shrink:0;"><i class="fa-solid fa-briefcase"></i></div>
+                                    <div>
+                                        <div class="apk-card-title" style="margin-bottom:2px;">Вакансии рядом</div>
+                                        <div class="apk-card-desc">12 результатов - обновлено 5 мин назад</div>
+                                    </div>
+                                </div>
+                                <div class="apk-card" style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,45,63,0.12);display:flex;align-items:center;justify-content:center;color:#ff69b4;font-size:0.8rem;flex-shrink:0;"><i class="fa-solid fa-file-lines"></i></div>
+                                    <div>
+                                        <div class="apk-card-title" style="margin-bottom:2px;">Конструктор резюме</div>
+                                        <div class="apk-card-desc">AI-шаблоны - 4 формата</div>
+                                    </div>
+                                </div>
+                                <div class="apk-card" style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,45,63,0.12);display:flex;align-items:center;justify-content:center;color:#ff69b4;font-size:0.8rem;flex-shrink:0;"><i class="fa-solid fa-bell"></i></div>
+                                    <div>
+                                        <div class="apk-card-title" style="margin-bottom:2px;">Уведомления</div>
+                                        <div class="apk-card-desc">Push - мгновенные оповещения</div>
+                                    </div>
+                                </div>
+                                <div class="apk-card" style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,45,63,0.12);display:flex;align-items:center;justify-content:center;color:#ff69b4;font-size:0.8rem;flex-shrink:0;"><i class="fa-solid fa-shield-halved"></i></div>
+                                    <div>
+                                        <div class="apk-card-title" style="margin-bottom:2px;">Офлайн режим</div>
+                                        <div class="apk-card-desc">Работает без интернета</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="apk-fab"><i class="fa-solid fa-plus"></i></div>
+                        </div>
+                    </div>
+                    <div class="platform-label">Android APK</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="x-marks">x x x x x x x x x x x x x x x x x x x x</div>
+
+    <!-- QUOTE 4 -->
+    <div class="emo-quote reveal">
+        пока другие листают тиктоки,<br>
+        я листаю вакансии в три утра
+    </div>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- TECH STACK -->
+    <section id="tech" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: 1deg;">Под капотом</h2>
+            <p class="section-subtitle reveal">технологии, которые <span class="strikethrough">ломают</span> делают магию</p>
+
+            <div class="tech-grid">
+                <div class="tech-item reveal">
+                    <i class="fas fa-robot"></i>
+                    <span>DeepSeek AI</span>
+                </div>
+                <div class="tech-item reveal">
+                    <i class="fab fa-telegram"></i>
+                    <span>Telegram Bot API</span>
+                </div>
+                <div class="tech-item reveal">
+                    <i class="fas fa-briefcase"></i>
+                    <span>hh.ru API</span>
+                </div>
+                <div class="tech-item reveal">
+                    <i class="fab fa-react"></i>
+                    <span>React</span>
+                </div>
+                <div class="tech-item reveal">
+                    <i class="fas fa-bolt"></i>
+                    <span>FastAPI</span>
+                </div>
+                <div class="tech-item reveal">
+                    <i class="fab fa-python"></i>
+                    <span>Python</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="heart-divider" data-divider>
+        - - <em class="broken-heart"><span class="heart-left">&#x2764;</span><span class="heart-right" style="position:absolute;opacity:0;"></span></em> - -
+    </div>
+
+    <!-- TEAM -->
+    <section id="team" class="parallax-section">
+        <div class="container">
+            <h2 class="section-title tear-header reveal" style="--r: -0.8deg;">Команда</h2>
+            <p class="section-subtitle reveal">те, кто <span class="strikethrough">страдал</span> работал над этим</p>
+
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="team-avatar"><i class="fas fa-clipboard-list" style="color:#ff2d6f;"></i></div>
+                    <h3>Никита</h3>
+                    <span class="role">Менеджер</span>
+                    <p class="flavor">дедлайн был вчера, как и мои надежды</p>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar"><i class="fas fa-terminal" style="color:#ff2d6f;"></i></div>
+                    <h3>Даниил</h3>
+                    <span class="role">Разработчик-философ</span>
+                    <p class="flavor">git commit -m "зачем всё это"</p>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar"><i class="fas fa-code" style="color:#ff2d6f;"></i></div>
+                    <h3>Захар</h3>
+                    <span class="role">Разработчик</span>
+                    <p class="flavor">мой код работает, а я — нет</p>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar"><i class="fas fa-palette" style="color:#ff2d6f;"></i></div>
+                    <h3>Ростислав</h3>
+                    <span class="role">Дизайнер</span>
+                    <p class="flavor">ещё один правочек убьёт меня</p>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar"><i class="fas fa-pencil-ruler" style="color:#ff2d6f;"></i></div>
+                    <h3>Максим</h3>
+                    <span class="role">Дизайнер</span>
+                    <p class="flavor">пиксель влево, душа вправо</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE 5 -->
+    <div class="emo-quote reveal">
+        за каждым великим проектом<br>
+        стоит команда с тёмными кругами под глазами
+    </div>
+
+    <!-- CHECKERED -->
+    <div class="checkered"></div>
+
+    <!-- FOOTER CTA -->
+    <section class="footer-cta">
+        <div class="container">
+            <div class="hero-bleeding-heart" style="margin-bottom:30px; transform:scale(0.7);">
+                <div class="heart-crack"></div>
+                <div class="heart-drip"></div>
+                <div class="heart-drip"></div>
+                <div class="heart-drip"></div>
+            </div>
+
+            <h2 class="tear-header">Хватит страдать в одиночку</h2>
+            <p class="sub">пусть AI пострадает вместе с тобой</p>
+
+            <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+                <a href="https://t.me/RostensteinsFilesBot" class="btn-emo" target="_blank">
+                    <i class="fab fa-telegram" style="margin-right:8px;"></i>Запустить бота
+                    <svg class="drip-svg" viewBox="0 0 200 28" preserveAspectRatio="none">
+                        <path class="drip-path" d="M0,0 Q10,0 10,0 Q12,8 14,18 Q15,22 16,18 Q18,4 20,0 L50,0 Q52,0 52,0 Q54,12 56,24 Q57,28 58,22 Q60,8 62,0 L100,0 Q102,0 102,0 Q103,6 104,14 Q105,18 106,12 Q107,4 108,0 L140,0 Q142,0 142,0 Q144,10 146,20 Q147,24 148,18 Q150,6 152,0 L200,0 L200,0 L0,0 Z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHECKERED -->
+    <div class="checkered"></div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p style="margin-bottom:8px; color:#444;">
+            <span style="color:#ff2d6f;">&#x2764;</span> ProTrack AI &mdash; 2026
+        </p>
+        <p>
+            <a href="https://t.me/RostensteinsFilesBot" style="margin:0 8px;">Telegram</a>
+            &middot;
+            <span style="margin:0 8px; color:#444;">16&ndash;22 y.o.</span>
+            &middot;
+            <span style="margin:0 8px; color:#333; font-family:'Caveat',cursive; font-size:0.9rem;">made with tears</span>
+        </p>
+    </footer>
+
+    <script>
+    (function() {
+        // === FLOATING PARTICLES ===
+        var container = document.getElementById('particles');
+        var symbols = ['\u2665', '\u2716', '\u2605', '\u2666', '\u2740', '\u2020'];
+        for (var i = 0; i < 30; i++) {
+            var p = document.createElement('span');
+            p.className = 'particle';
+            p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + '%';
+            p.style.fontSize = (8 + Math.random() * 10) + 'px';
+            p.style.animationDuration = (12 + Math.random() * 20) + 's';
+            p.style.animationDelay = (Math.random() * 15) + 's';
+            p.style.opacity = 0;
+            container.appendChild(p);
+        }
+
+        // === HERO RAIN ===
+        var rain = document.getElementById('heroRain');
+        for (var i = 0; i < 40; i++) {
+            var drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.height = (20 + Math.random() * 40) + 'px';
+            drop.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+            drop.style.animationDelay = (Math.random() * 4) + 's';
+            rain.appendChild(drop);
+        }
+
+        // === STICKY HEADER ===
+        var header = document.getElementById('stickyHeader');
+        var heroH = document.querySelector('.hero').offsetHeight;
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > heroH * 0.7) {
+                header.classList.add('visible');
+            } else {
+                header.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        // === SCROLL REVEAL (IntersectionObserver) ===
+        var reveals = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            var obs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('revealed');
+                        obs.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            reveals.forEach(function(el) { obs.observe(el); });
+        } else {
+            reveals.forEach(function(el) { el.classList.add('revealed'); });
+        }
+
+        // === BROKEN HEART DIVIDERS - crack on scroll ===
+        var dividers = document.querySelectorAll('[data-divider]');
+        if ('IntersectionObserver' in window) {
+            var divObs = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('cracked');
+                    } else {
+                        e.target.classList.remove('cracked');
+                    }
+                });
+            }, { threshold: 0.5 });
+            dividers.forEach(function(d) { divObs.observe(d); });
+        }
+
+        // === PARALLAX on scroll ===
+        var sections = document.querySelectorAll('.parallax-section');
+        window.addEventListener('scroll', function() {
+            var scrollY = window.pageYOffset;
+            sections.forEach(function(sec) {
+                var top = sec.offsetTop;
+                var speed = 0.15;
+                var offset = (scrollY - top) * speed;
+                sec.style.backgroundPositionY = offset + 'px';
+            });
+        }, { passive: true });
+    })();
+    </script>
+
+</body>
+</html>
