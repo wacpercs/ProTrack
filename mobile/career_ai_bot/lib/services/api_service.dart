@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://89.125.118.57:8000/api';
+  static const String baseUrl = 'https://say-my-name.ru/api';
 
   String? _authToken;
   int? _userId;
