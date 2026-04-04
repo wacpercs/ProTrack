@@ -1,0 +1,45 @@
+name: ProTrack
+description: Career AI Assistant
+version: 1.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+  shared_preferences: ^2.2.2
+  provider: ^6.1.1
+  cupertino_icons: ^1.0.6
+  phosphor_flutter: ^2.1.0
+  url_launcher: ^6.2.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/logo1.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo1.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#007AFF"
+  adaptive_icon_foreground: "assets/images/logo1.png"
+
+flutter_native_splash:
+  color: "#007AFF"
+  image: "assets/images/logo1.png"
+  android: true
+  ios: true
+  android_12:
+    color: "#000000"
+    image: "assets/images/logo1.png"

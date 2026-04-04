@@ -1,0 +1,3780 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrack AI — Чистейший карьерный план</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --charcoal: #1a1a1a;
+            --charcoal-light: #2a2a2a;
+            --charcoal-mid: #333333;
+            --toxic: #00c853;
+            --toxic-dark: #009624;
+            --toxic-glow: rgba(0, 200, 83, 0.4);
+            --amber: #ffd600;
+            --amber-dark: #c7a500;
+            --white: #f0f0f0;
+            --white-dim: #b0b0b0;
+            --danger: #ff3d00;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background-color: var(--charcoal);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal); }
+        ::-webkit-scrollbar-thumb { background: var(--toxic-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--toxic); }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4 {
+            font-family: 'Bebas Neue', Impact, sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ===== COOK METER (scroll progress) ===== */
+        .cook-meter {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            z-index: 10001;
+            background: rgba(0,0,0,0.5);
+        }
+        .cook-meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--toxic-dark), var(--toxic), var(--amber), var(--danger));
+            box-shadow: 0 0 12px var(--toxic-glow), 0 0 24px rgba(0,200,83,0.2);
+            transition: width 0.05s linear;
+            position: relative;
+        }
+        .cook-meter-fill::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: -4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--toxic);
+            box-shadow: 0 0 16px var(--toxic), 0 0 32px var(--toxic-glow);
+            animation: meterPulse 1s ease-in-out infinite;
+        }
+        .cook-meter-label {
+            position: fixed;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--toxic);
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-shadow: 0 0 6px var(--toxic-glow);
+            pointer-events: none;
+        }
+        .cook-meter-label.visible { opacity: 1; }
+        @keyframes meterPulse {
+            0%, 100% { box-shadow: 0 0 8px var(--toxic); transform: scale(1); }
+            50% { box-shadow: 0 0 20px var(--toxic), 0 0 40px var(--toxic-glow); transform: scale(1.3); }
+        }
+
+        /* ===== STICKY HEADER ===== */
+        .sticky-header {
+            position: fixed;
+            top: 5px;
+            left: 0;
+            width: 100%;
+            z-index: 10000;
+            background: rgba(17,17,17,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,200,83,0.15);
+            padding: 8px 0;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .sticky-header.show { transform: translateY(0); }
+        .sticky-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sticky-header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .sticky-header-logo .mini-element {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 40px;
+            border: 2px solid var(--toxic);
+            background: rgba(0,200,83,0.08);
+            box-shadow: 0 0 10px var(--toxic-glow);
+        }
+        .sticky-header-logo .mini-element .sym {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            color: var(--white);
+            line-height: 1;
+        }
+        .sticky-header-logo .mini-element .nm {
+            font-size: 5px;
+            color: var(--toxic);
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .sticky-header-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            color: var(--white);
+            letter-spacing: 3px;
+        }
+        .sticky-header-brand span { color: var(--toxic); }
+        .sticky-header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .sticky-header-nav a {
+            color: var(--white-dim);
+            text-decoration: none;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .sticky-header-nav a:hover {
+            color: var(--toxic);
+            text-shadow: 0 0 8px var(--toxic-glow);
+        }
+        .sticky-header-cta {
+            padding: 6px 16px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--charcoal);
+            background: var(--toxic);
+            box-shadow: 0 0 12px var(--toxic-glow);
+            transition: all 0.3s;
+        }
+        .sticky-header-cta:hover {
+            background: #00e676;
+            box-shadow: 0 0 24px var(--toxic-glow);
+        }
+
+        @media (max-width: 768px) {
+            .sticky-header-nav a:not(.sticky-header-cta) { display: none; }
+            .cook-meter-label { font-size: 9px; }
+            .sticky-header-cta { font-size: 12px; padding: 5px 12px; }
+            .container { padding: 0 12px; }
+        }
+
+        /* ===== MOUSE GLOW ===== */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,200,83,0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: left 0.08s, top 0.08s;
+            mix-blend-mode: screen;
+        }
+
+        /* ===== TOXIC BREATHING GLOW ===== */
+        @keyframes toxicBreathe {
+            0%, 100% { opacity: 0.03; }
+            50% { opacity: 0.08; }
+        }
+        .toxic-breathe {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 50%, rgba(0,200,83,0.12) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 9997;
+            animation: toxicBreathe 4s ease-in-out infinite;
+        }
+
+        /* ===== CRT SCANLINES OVERLAY ===== */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 1px,
+                rgba(0, 0, 0, 0.04) 1px,
+                rgba(0, 0, 0, 0.04) 2px
+            );
+        }
+        .scanlines::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0,200,83,0.008) 50%
+            );
+            background-size: 100% 4px;
+            animation: scanlineFlicker 0.1s steps(2) infinite;
+        }
+        @keyframes scanlineFlicker {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(2px); }
+        }
+
+        /* ===== PERIODIC TABLE ELEMENT BOX ===== */
+        .element-box {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 72px;
+            border: 2px solid var(--toxic);
+            background: rgba(0, 200, 83, 0.08);
+            position: relative;
+            margin: 0 2px;
+            vertical-align: middle;
+            box-shadow: 0 0 12px var(--toxic-glow), inset 0 0 8px rgba(0, 200, 83, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .element-box:hover {
+            box-shadow: 0 0 25px var(--toxic-glow), inset 0 0 15px rgba(0, 200, 83, 0.1);
+            transform: scale(1.05);
+        }
+
+        .element-box .number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--toxic);
+            position: absolute;
+            top: 3px;
+            left: 5px;
+        }
+
+        .element-box .symbol {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--white);
+            line-height: 1;
+            margin-top: 6px;
+        }
+
+        .element-box .name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7px;
+            color: var(--toxic);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Big element for hero */
+        .element-box.big {
+            width: 80px;
+            height: 90px;
+        }
+        .element-box.big .symbol { font-size: 44px; }
+        .element-box.big .name { font-size: 9px; }
+        .element-box.big .number { font-size: 12px; }
+
+        /* ===== SMOKE ANIMATION (DRAMATIC MULTI-LAYER) ===== */
+        .smoke-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .smoke {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(0, 200, 83, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 60%, rgba(0, 200, 83, 0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(255, 214, 0, 0.05) 0%, transparent 40%);
+            animation: smokeRise 8s ease-in-out infinite;
+        }
+
+        .smoke-layer-2 {
+            background:
+                radial-gradient(ellipse at 70% 90%, rgba(0, 200, 83, 0.08) 0%, transparent 45%),
+                radial-gradient(ellipse at 10% 70%, rgba(0, 200, 83, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 40% 50%, rgba(255, 214, 0, 0.04) 0%, transparent 50%);
+            animation: smokeRise2 12s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .smoke-layer-3 {
+            background:
+                radial-gradient(ellipse at 60% 70%, rgba(0, 200, 83, 0.06) 0%, transparent 40%),
+                radial-gradient(ellipse at 30% 90%, rgba(255, 61, 0, 0.03) 0%, transparent 50%);
+            animation: smokeRise3 15s ease-in-out infinite;
+            opacity: 0.4;
+        }
+
+        .smoke-layer-4 {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 25% 85%, rgba(0, 200, 83, 0.12) 0%, transparent 30%),
+                radial-gradient(ellipse at 75% 75%, rgba(0, 200, 83, 0.08) 0%, transparent 35%),
+                radial-gradient(ellipse at 50% 95%, rgba(0, 200, 83, 0.06) 0%, transparent 45%);
+            animation: smokeDrift 20s ease-in-out infinite;
+            opacity: 0.5;
+        }
+
+        .smoke-layer-5 {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0,200,83,0.06) 0%, transparent 100%);
+            animation: smokeWave 10s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes smokeRise {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-40px) scale(1.08); opacity: 0.35; }
+        }
+
+        @keyframes smokeRise2 {
+            0%, 100% { transform: translateY(0) scale(1) translateX(0); opacity: 0.5; }
+            33% { transform: translateY(-25px) scale(1.03) translateX(20px); opacity: 0.25; }
+            66% { transform: translateY(-50px) scale(1.06) translateX(-15px); opacity: 0.4; }
+        }
+
+        @keyframes smokeRise3 {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.35; }
+            50% { transform: translateY(-60px) rotate(3deg) scale(1.05); opacity: 0.15; }
+        }
+
+        @keyframes smokeDrift {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-10%) translateY(-20px); }
+            50% { transform: translateX(-5%) translateY(-40px); }
+            75% { transform: translateX(5%) translateY(-15px); }
+        }
+
+        @keyframes smokeWave {
+            0%, 100% { transform: scaleY(1) translateY(0); opacity: 0.3; }
+            50% { transform: scaleY(1.3) translateY(-20px); opacity: 0.15; }
+        }
+
+        /* ===== FOG PARTICLES ===== */
+        .fog-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 200, 83, 0.15), transparent 70%);
+            pointer-events: none;
+            animation: fogFloat linear infinite;
+        }
+
+        @keyframes fogFloat {
+            0% { transform: translate(0, 0) scale(1); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+        }
+
+        /* ===== FLOATING MOLECULE ANIMATIONS ===== */
+        .floating-molecule {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.12;
+            animation: moleculeSpin linear infinite;
+        }
+        .floating-molecule svg circle {
+            fill: none;
+            stroke: var(--toxic);
+            stroke-width: 1.5;
+        }
+        .floating-molecule svg line {
+            stroke: var(--toxic);
+            stroke-width: 1;
+            opacity: 0.6;
+        }
+        .floating-molecule svg .atom-fill {
+            fill: rgba(0,200,83,0.3);
+        }
+        @keyframes moleculeSpin {
+            0% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(90deg) translateY(-15px); }
+            50% { transform: rotate(180deg) translateY(0); }
+            75% { transform: rotate(270deg) translateY(15px); }
+            100% { transform: rotate(360deg) translateY(0); }
+        }
+
+        /* ===== MOLECULAR DECORATIONS (static) ===== */
+        .molecule {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .molecule .atom {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--toxic);
+            background: rgba(0, 200, 83, 0.15);
+            box-shadow: 0 0 8px var(--toxic-glow);
+        }
+
+        .molecule .bond {
+            position: absolute;
+            height: 2px;
+            background: var(--toxic);
+            opacity: 0.3;
+            transform-origin: left center;
+        }
+
+        /* ===== HAZARD STRIPES (ANIMATED) ===== */
+        .hazard-divider {
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--amber),
+                var(--amber) 10px,
+                var(--charcoal) 10px,
+                var(--charcoal) 20px
+            );
+            background-size: 28.28px 28.28px;
+            opacity: 0.8;
+            animation: hazardMove 1.5s linear infinite;
+        }
+
+        .hazard-divider.thin {
+            height: 8px;
+        }
+
+        @keyframes hazardMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 28.28px 0; }
+        }
+
+        /* ===== CHEMICAL REACTION SECTION TRANSITIONS ===== */
+        .section-transition {
+            position: relative;
+            height: 60px;
+            overflow: hidden;
+            background: transparent;
+        }
+        .section-transition .dissolve-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .section-transition .dissolve-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--toxic);
+            animation: dissolveFloat 3s ease-in-out infinite;
+        }
+        @keyframes dissolveFloat {
+            0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
+            20% { opacity: 0.8; transform: translateY(-5px) scale(1); }
+            80% { opacity: 0.3; transform: translateY(-25px) scale(0.5); }
+        }
+
+        /* ===== EVIDENCE TAPE ===== */
+        .evidence-tape {
+            display: inline-block;
+            background: var(--amber);
+            color: var(--charcoal);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 11px;
+            letter-spacing: 3px;
+            padding: 3px 14px;
+            text-transform: uppercase;
+            transform: rotate(-2deg);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .evidence-tape::before,
+        .evidence-tape::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 15px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 3px,
+                rgba(0, 0, 0, 0.15) 3px,
+                rgba(0, 0, 0, 0.15) 6px
+            );
+        }
+
+        .evidence-tape::before { left: -10px; }
+        .evidence-tape::after { right: -10px; }
+
+        /* ===== SECTION LABEL (like evidence marker) ===== */
+        .section-label {
+            display: inline-block;
+            background: var(--amber);
+            color: var(--charcoal);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 11px;
+            letter-spacing: 3px;
+            padding: 3px 14px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        /* ===== CHEMICAL FORMULA ===== */
+        .formula {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--toxic);
+            font-size: 13px;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        .formula sub { font-size: 0.7em; vertical-align: baseline; position: relative; top: 0.3em; }
+
+        /* ===== GLOW TEXT ===== */
+        .glow-text {
+            text-shadow: 0 0 10px var(--toxic-glow), 0 0 20px var(--toxic-glow), 0 0 40px rgba(0, 200, 83, 0.2);
+        }
+
+        .glow-text-amber {
+            text-shadow: 0 0 10px rgba(255, 214, 0, 0.4), 0 0 20px rgba(255, 214, 0, 0.2);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-toxic {
+            display: inline-block;
+            padding: 16px 40px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--charcoal);
+            background: var(--toxic);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--toxic-glow);
+            cursor: pointer;
+        }
+
+        .btn-toxic::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s;
+        }
+        .btn-toxic:hover::before {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .btn-toxic:hover {
+            background: #00e676;
+            box-shadow: 0 0 40px var(--toxic-glow), 0 0 60px rgba(0, 200, 83, 0.3);
+            transform: scale(1.05);
+        }
+
+        .btn-outline {
+            display: inline-block;
+            padding: 12px 32px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--toxic);
+            background: transparent;
+            border: 2px solid var(--toxic);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 200, 83, 0.1);
+            box-shadow: 0 0 20px var(--toxic-glow);
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* ===== SECTION SPACING ===== */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        /* desert/gritty texture overlay */
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px
+                ),
+                radial-gradient(ellipse at 30% 50%, rgba(255, 214, 0, 0.01) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        section > * { position: relative; z-index: 1; }
+
+        .section-title {
+            font-size: clamp(36px, 5vw, 56px);
+            text-align: center;
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--white-dim);
+            font-size: 14px;
+            margin-bottom: 48px;
+        }
+
+        /* ===== TYPEWRITER EFFECT ===== */
+        .typewriter-quote {
+            font-size: 12px;
+            color: var(--amber);
+            text-align: center;
+            margin-top: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--amber);
+            display: inline-block;
+            max-width: 0;
+            animation: typeExpand 3s steps(60, end) forwards, blinkCaret 0.7s step-end infinite;
+        }
+        .typewriter-quote.typed {
+            max-width: 100%;
+        }
+        @keyframes typeExpand {
+            from { max-width: 0; }
+            to { max-width: 100%; }
+        }
+        @keyframes blinkCaret {
+            0%, 100% { border-color: var(--amber); }
+            50% { border-color: transparent; }
+        }
+
+        /* ==============================
+           HERO
+           ============================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background:
+                radial-gradient(ellipse at 50% 120%, rgba(0, 200, 83, 0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 0%, rgba(255, 214, 0, 0.05) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 30%, rgba(0, 200, 83, 0.04) 0%, transparent 30%),
+                linear-gradient(180deg, #0a0a0a 0%, var(--charcoal) 50%, #111 100%);
+            overflow: hidden;
+            padding: 40px 0;
+        }
+
+        .hero-content { z-index: 2; position: relative; }
+
+        .hero-formula {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .hero-title-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(40px, 8vw, 80px);
+            color: var(--white);
+            letter-spacing: 6px;
+            line-height: 1;
+        }
+
+        .hero-subtitle {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(20px, 3vw, 32px);
+            color: var(--amber);
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+
+        .hero-tagline {
+            font-size: 16px;
+            color: var(--white-dim);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .hero-tagline span {
+            color: var(--toxic);
+            font-weight: 700;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--charcoal-light);
+            border: 1px solid var(--charcoal-mid);
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--white-dim);
+        }
+
+        .hero-badge i { color: var(--toxic); }
+
+        .hero-badges {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Grid lines background */
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 200, 83, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 200, 83, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ==============================
+           RECIPE (SYNTHESIS STEPS)
+           ============================== */
+        .recipe-section {
+            background: linear-gradient(180deg, var(--charcoal) 0%, #151515 100%);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--charcoal-light);
+            border: 1px solid var(--charcoal-mid);
+            padding: 32px 24px;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--toxic), transparent);
+        }
+
+        .step-card:hover {
+            border-color: var(--toxic);
+            box-shadow: 0 0 30px rgba(0, 200, 83, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--toxic);
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .step-icon {
+            font-size: 28px;
+            color: var(--toxic);
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--amber);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--white-dim);
+            line-height: 1.6;
+        }
+
+        .step-formula {
+            margin-top: 12px;
+            font-size: 11px;
+        }
+
+        /* Arrow connectors between steps */
+        .step-card::after {
+            content: '\f061';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--toxic);
+            font-size: 18px;
+            z-index: 5;
+            opacity: 0.5;
+        }
+
+        .step-card:last-child::after { display: none; }
+
+        @media (max-width: 768px) {
+            .step-card::after { display: none; }
+        }
+
+        /* ==============================
+           FEATURES (PERIODIC TABLE)
+           ============================== */
+        .features-section {
+            background: linear-gradient(180deg, #151515 0%, var(--charcoal) 100%);
+            overflow: hidden;
+        }
+
+        /* Liquid / bubbling background */
+        .liquid-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .liquid-bg .liquid-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0,200,83,0.06);
+            border: 1px solid rgba(0,200,83,0.1);
+            animation: liquidRise linear infinite;
+        }
+        @keyframes liquidRise {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 0.6; }
+            80% { opacity: 0.2; }
+            100% { transform: translateY(-600px) scale(0.3); opacity: 0; }
+        }
+        .liquid-bg .liquid-wave {
+            position: absolute;
+            bottom: 0;
+            left: -50%;
+            width: 200%;
+            height: 80px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(0,200,83,0.04) 0%, transparent 70%);
+            animation: liquidWave 6s ease-in-out infinite;
+        }
+        @keyframes liquidWave {
+            0%, 100% { transform: translateX(0) scaleY(1); }
+            50% { transform: translateX(3%) scaleY(1.4); }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--charcoal-light);
+            border: 1px solid var(--charcoal-mid);
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            border-color: var(--toxic);
+            box-shadow: 0 0 40px rgba(0, 200, 83, 0.15);
+            transform: translateY(-6px);
+        }
+
+        .feature-element {
+            width: 100px;
+            height: 110px;
+            border: 3px solid var(--toxic);
+            margin: 0 auto 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: rgba(0, 200, 83, 0.05);
+            box-shadow: 0 0 20px var(--toxic-glow);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        /* Holographic / iridescent shimmer on hover */
+        .feature-element::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                135deg,
+                transparent 20%,
+                rgba(0,200,83,0.1) 30%,
+                rgba(255,214,0,0.08) 40%,
+                rgba(0,200,83,0.15) 50%,
+                rgba(255,61,0,0.06) 60%,
+                rgba(0,200,83,0.1) 70%,
+                transparent 80%
+            );
+            transform: rotate(45deg) translateX(-200%);
+            transition: transform 0.8s ease;
+        }
+        .feature-card:hover .feature-element::before {
+            transform: rotate(45deg) translateX(200%);
+        }
+        .feature-element::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(0,200,83,0.0) 40%,
+                rgba(0,200,83,0.08) 50%,
+                rgba(0,200,83,0.0) 60%,
+                transparent 100%
+            );
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .feature-card:hover .feature-element::after {
+            opacity: 1;
+            animation: shimmerPulse 2s ease-in-out infinite;
+        }
+        @keyframes shimmerPulse {
+            0%, 100% { background-position: -200% 0; opacity: 0.5; }
+            50% { background-position: 200% 0; opacity: 1; }
+        }
+
+        .feature-card:hover .feature-element {
+            box-shadow:
+                0 0 40px var(--toxic-glow),
+                0 0 60px rgba(0, 200, 83, 0.2),
+                inset 0 0 30px rgba(0,200,83,0.05),
+                0 0 80px rgba(255,214,0,0.05);
+            border-color: var(--amber);
+        }
+
+        .feature-element .el-number {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            font-size: 12px;
+            color: var(--toxic);
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 2;
+        }
+
+        .feature-element .el-symbol {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--white);
+            line-height: 1;
+            margin-top: 8px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .feature-element .el-name {
+            font-size: 9px;
+            color: var(--toxic);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 2;
+            position: relative;
+        }
+
+        .feature-element .el-weight {
+            position: absolute;
+            bottom: 4px;
+            font-size: 9px;
+            color: var(--white-dim);
+            opacity: 0.5;
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 2;
+        }
+
+        .feature-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            color: var(--amber);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--white-dim);
+            line-height: 1.6;
+        }
+
+        /* ==============================
+           DISTRIBUTION POINTS (PHONE MOCKUPS)
+           ============================== */
+        .distribution-section {
+            background:
+                radial-gradient(ellipse at 80% 20%, rgba(0, 200, 83, 0.04) 0%, transparent 50%),
+                linear-gradient(180deg, var(--charcoal) 0%, #151515 100%);
+        }
+
+        .phones-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            justify-items: center;
+        }
+
+        .phone-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 500px;
+            background: #1a1a1a;
+            border: 3px solid #333;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 40px rgba(0, 200, 83, 0.12),
+                0 0 80px rgba(0, 200, 83, 0.05),
+                inset 0 0 1px rgba(255,255,255,0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .phone-frame:hover {
+            transform: perspective(800px) rotateY(-5deg) rotateX(2deg);
+            box-shadow:
+                0 0 60px rgba(0, 200, 83, 0.2),
+                0 0 100px rgba(0, 200, 83, 0.08),
+                inset 0 0 1px rgba(255,255,255,0.08);
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: #111;
+            border-radius: 0 0 18px 18px;
+            z-index: 10;
+        }
+
+        .phone-notch::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #222;
+            border-radius: 50%;
+            border: 1px solid #333;
+        }
+
+        .phone-screen {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 28px;
+            overflow: hidden;
+            background: #0d0d0d;
+        }
+
+        /* Android status bar */
+        .android-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 16px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            font-family: 'Roboto Mono', monospace;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .android-status-bar .status-icons {
+            display: flex;
+            gap: 6px;
+            font-size: 9px;
+        }
+
+        /* Telegram Bot screen */
+        .tg-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #0e1621;
+        }
+
+        .tg-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 36px 14px 10px;
+            background: #17212b;
+            border-bottom: 1px solid rgba(0,200,83,0.15);
+        }
+
+        .tg-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--toxic), #004d25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .tg-bot-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .tg-bot-status {
+            font-size: 10px;
+            color: var(--toxic);
+        }
+
+        .tg-messages {
+            flex: 1;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .tg-msg {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .tg-msg.bot {
+            background: #182533;
+            color: rgba(255,255,255,0.85);
+            border-bottom-left-radius: 4px;
+            border-left: 2px solid var(--toxic);
+        }
+
+        .tg-msg.user {
+            background: rgba(0,200,83,0.15);
+            color: var(--toxic);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .tg-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 10px 10px;
+        }
+
+        .tg-btn {
+            background: rgba(0,200,83,0.1);
+            border: 1px solid rgba(0,200,83,0.3);
+            color: var(--toxic);
+            padding: 8px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .tg-input-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: #17212b;
+            border-top: 1px solid rgba(0,200,83,0.1);
+        }
+
+        .tg-input {
+            flex: 1;
+            background: #0e1621;
+            border: 1px solid #2b3945;
+            border-radius: 18px;
+            padding: 6px 14px;
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+        }
+
+        .tg-send {
+            color: var(--toxic);
+            font-size: 16px;
+        }
+
+        /* Mini App screen */
+        .miniapp-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #0a0a0a;
+        }
+
+        .miniapp-header {
+            padding: 36px 14px 10px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(0,200,83,0.08), transparent);
+        }
+
+        .miniapp-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            color: var(--toxic);
+            letter-spacing: 4px;
+        }
+
+        .miniapp-subtitle {
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        .miniapp-cards {
+            flex: 1;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .miniapp-card {
+            background: rgba(0,200,83,0.04);
+            border: 1px solid rgba(0,200,83,0.12);
+            border-radius: 12px;
+            padding: 12px;
+            transition: box-shadow 0.3s;
+        }
+
+        .miniapp-card:hover {
+            box-shadow: 0 0 20px rgba(0,200,83,0.1);
+        }
+
+        .miniapp-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--toxic);
+            margin-bottom: 4px;
+        }
+
+        .miniapp-card-desc {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.4;
+        }
+
+        .miniapp-card-badge {
+            display: inline-block;
+            background: rgba(0,200,83,0.15);
+            color: var(--toxic);
+            font-size: 8px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+            letter-spacing: 1px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .miniapp-navbar {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background: #111;
+            border-top: 1px solid rgba(0,200,83,0.1);
+        }
+
+        .miniapp-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .miniapp-nav-item.active {
+            color: var(--toxic);
+        }
+
+        .miniapp-nav-item i {
+            font-size: 14px;
+        }
+
+        /* APK screen */
+        .apk-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #0a0a0a;
+        }
+
+        .apk-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 14px 8px;
+            background: rgba(0,200,83,0.05);
+            border-bottom: 1px solid rgba(0,200,83,0.1);
+        }
+
+        .apk-header-back {
+            color: var(--toxic);
+            font-size: 14px;
+        }
+
+        .apk-header-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .apk-content {
+            flex: 1;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .apk-card {
+            background: rgba(0,200,83,0.04);
+            border: 1px solid rgba(0,200,83,0.12);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .apk-card-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, rgba(0,200,83,0.2), rgba(0,200,83,0.05));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--toxic);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .apk-card-info {
+            flex: 1;
+        }
+
+        .apk-card-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .apk-card-meta {
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 2px;
+        }
+
+        .apk-fab {
+            position: absolute;
+            bottom: 24px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--toxic);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(0,200,83,0.3);
+        }
+
+        /* Evidence tag labels */
+        .phone-label {
+            display: inline-block;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--amber);
+            color: var(--amber);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            padding: 6px 18px;
+            position: relative;
+        }
+
+        .phone-label::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 1px dashed rgba(255,193,7,0.3);
+        }
+
+        .phone-label::after {
+            content: 'EVIDENCE';
+            position: absolute;
+            top: -8px;
+            right: 6px;
+            font-size: 6px;
+            color: rgba(255,193,7,0.5);
+            letter-spacing: 2px;
+            background: var(--charcoal);
+            padding: 0 4px;
+        }
+
+        /* ==============================
+           TECH STACK (INGREDIENTS)
+           ============================== */
+        .tech-section {
+            background: linear-gradient(180deg, #151515 0%, var(--charcoal) 100%);
+        }
+
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .ingredient {
+            background: var(--charcoal-light);
+            border: 1px solid var(--charcoal-mid);
+            padding: 24px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ingredient::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--toxic);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .ingredient:hover::before { transform: scaleX(1); }
+
+        .ingredient:hover {
+            border-color: var(--toxic);
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px rgba(0, 200, 83, 0.1);
+        }
+
+        .ingredient-icon {
+            font-size: 28px;
+            color: var(--toxic);
+            margin-bottom: 10px;
+        }
+
+        .ingredient-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            color: var(--white);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .ingredient-role {
+            font-size: 11px;
+            color: var(--white-dim);
+        }
+
+        .ingredient-formula {
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--toxic);
+            opacity: 0.5;
+        }
+
+        /* ==============================
+           TEAM (DEA EVIDENCE CARDS / WANTED POSTERS)
+           ============================== */
+        .team-section {
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(0, 200, 83, 0.03) 0%, transparent 50%),
+                linear-gradient(180deg, var(--charcoal) 0%, #151515 100%);
+            overflow: hidden;
+        }
+
+        /* Hero image wrapper for Gustavo */
+        .team-hero-img-wrap {
+            position: relative;
+            max-width: 480px;
+            margin: 0 auto 0;
+        }
+
+        .team-hero-img-wrap img {
+            width: 100%;
+            display: block;
+            border: 2px solid var(--toxic);
+            box-shadow: 0 0 25px var(--toxic-glow), 0 0 60px rgba(0,200,83,0.15);
+        }
+
+        .team-hero-img-wrap::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 120px;
+            background: linear-gradient(to bottom, transparent, var(--charcoal));
+            pointer-events: none;
+        }
+
+        .team-hero-info {
+            text-align: center;
+            margin-top: -20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .team-hero-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            color: var(--white);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--toxic-glow);
+        }
+
+        .team-hero-role {
+            font-size: 13px;
+            color: var(--toxic);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .team-hero-quote {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--white-dim);
+            font-style: italic;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Puppet strings container */
+        .team-strings-area {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        /* The vertical green strings from Gustavo down to cards */
+        .team-strings-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 25%;
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--toxic), rgba(0,200,83,0.3));
+            box-shadow: 0 0 4px var(--toxic-glow);
+        }
+
+        .team-strings-area::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 25%;
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--toxic), rgba(0,200,83,0.3));
+            box-shadow: 0 0 4px var(--toxic-glow);
+        }
+
+        /* Cards row */
+        .team-puppet-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .team-puppet-card {
+            background: linear-gradient(180deg, #1a2418 0%, #141e14 100%);
+            border: 2px solid rgba(0,200,83,0.3);
+            padding: 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.3), 0 0 15px rgba(0,200,83,0.08);
+        }
+
+        /* Additional strings from card top corners */
+        .team-puppet-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(0,200,83,0.3), var(--toxic));
+            box-shadow: 0 0 4px var(--toxic-glow);
+            z-index: 1;
+        }
+
+        .team-puppet-card:hover {
+            border-color: var(--toxic);
+            box-shadow: 0 0 30px rgba(0, 200, 83, 0.2), inset 0 0 40px rgba(0,0,0,0.3);
+            transform: translateY(-4px);
+        }
+
+        .team-puppet-card-tape {
+            position: absolute;
+            width: 50px;
+            height: 14px;
+            background: rgba(0,200,83,0.25);
+            transform: rotate(-45deg);
+            top: 6px;
+            left: -8px;
+            z-index: 2;
+        }
+
+        .team-puppet-card-img {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+            border-bottom: 2px solid rgba(0,200,83,0.2);
+            filter: saturate(0.7) brightness(0.9);
+            transition: filter 0.3s ease;
+        }
+
+        .team-puppet-card:hover .team-puppet-card-img {
+            filter: saturate(1) brightness(1);
+        }
+
+        .team-puppet-card-body {
+            padding: 20px 16px 24px;
+        }
+
+        .team-puppet-card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            color: var(--toxic);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px var(--toxic-glow);
+        }
+
+        .team-puppet-card-members {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--white);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .team-puppet-card-members span {
+            color: var(--toxic);
+            font-weight: 700;
+        }
+
+        .team-puppet-card-quote {
+            font-size: 11px;
+            color: var(--white-dim);
+            font-style: italic;
+            border-top: 1px solid rgba(0,200,83,0.15);
+            padding-top: 10px;
+            margin-top: 4px;
+        }
+
+        /* ==============================
+           FOOTER
+           ============================== */
+        .footer {
+            padding: 60px 0 40px;
+            text-align: center;
+            background: #111;
+            position: relative;
+        }
+
+        .footer-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(28px, 4vw, 48px);
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+
+        .footer-title .highlight {
+            color: var(--toxic);
+        }
+
+        .footer-subtitle {
+            font-size: 14px;
+            color: var(--white-dim);
+            margin-bottom: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .footer-links a {
+            color: var(--white-dim);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover { color: var(--toxic); }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--white-dim);
+            opacity: 0.5;
+        }
+
+        /* ==============================
+           FLOATING MOLECULAR STRUCTURES
+           ============================== */
+        .mol-deco {
+            position: absolute;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .mol-deco .mol-node {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--toxic);
+            position: absolute;
+            box-shadow: 0 0 6px var(--toxic-glow);
+        }
+
+        .mol-deco .mol-line {
+            position: absolute;
+            height: 2px;
+            background: var(--toxic);
+            transform-origin: left center;
+        }
+
+        /* ==============================
+           ANIMATIONS
+           ============================== */
+        /* Scroll-triggered reveals */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.from-left {
+            transform: translateX(-60px) translateY(0);
+        }
+        .reveal.from-right {
+            transform: translateX(60px) translateY(0);
+        }
+        .reveal.from-scale {
+            transform: scale(0.85);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Flicker for neon effect */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            96% { opacity: 0.7; }
+            97% { opacity: 1; }
+        }
+
+        .flicker { animation: flicker 4s infinite; }
+
+        /* Bubbling animation */
+        @keyframes bubble {
+            0% { transform: translateY(0) scale(1); opacity: 0.6; }
+            100% { transform: translateY(-60px) scale(0.3); opacity: 0; }
+        }
+
+        .bubble-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: 0;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--toxic);
+            opacity: 0.4;
+            animation: bubble 3s ease-in infinite;
+        }
+
+        /* Flask decorative element */
+        .flask-deco {
+            position: absolute;
+            opacity: 0.08;
+            font-size: 120px;
+            color: var(--toxic);
+            pointer-events: none;
+        }
+
+        /* ==============================
+           PARALLAX SECTIONS
+           ============================== */
+        .parallax-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 120%;
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+        }
+
+        /* ==============================
+           RESPONSIVE
+           ============================== */
+        @media (max-width: 768px) {
+            section { padding: 60px 0; }
+            .hero { min-height: auto; padding: 100px 16px 60px; }
+            .hero-title-text { font-size: 36px; letter-spacing: 3px; }
+            .element-box.big { width: 56px; height: 64px; }
+            .element-box.big .symbol { font-size: 30px; }
+            .element-box.big .number { font-size: 10px; }
+            .element-box.big .name { font-size: 7px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .feature-card { padding: 24px 16px; }
+            .feature-element { width: 80px; height: 88px; }
+            .feature-element .el-symbol { font-size: 36px; }
+            .phones-grid { grid-template-columns: 1fr; gap: 48px; }
+            .phone-frame { width: 260px; height: 460px; }
+            .ingredients-grid { grid-template-columns: repeat(2, 1fr); }
+            .team-puppet-cards { grid-template-columns: 1fr 1fr; gap: 16px; }
+            .team-strings-area::before { left: 25%; }
+            .team-strings-area::after { right: 25%; }
+            .team-hero-img-wrap { max-width: 320px; }
+            .team-hero-name { font-size: 28px; letter-spacing: 2px; }
+            .team-hero-role { font-size: 11px; }
+            .team-hero-quote { font-size: 11px; }
+            .team-puppet-card-title { font-size: 16px; letter-spacing: 1px; }
+            .team-puppet-card-members { font-size: 11px; }
+            .team-puppet-card-quote { font-size: 10px; }
+            .team-puppet-card-img { height: 160px; }
+            .floating-molecule { display: none; }
+            .typewriter-quote { white-space: normal; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title-text { font-size: 28px; letter-spacing: 2px; }
+            .element-box.big { width: 46px; height: 54px; }
+            .element-box.big .symbol { font-size: 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .team-puppet-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .team-strings-area { padding-top: 30px; }
+            .team-strings-area::before { left: 25%; height: 30px; }
+            .team-strings-area::after { right: 25%; height: 30px; }
+            .team-puppet-card::before { height: 30px; top: -30px; }
+            .team-hero-img-wrap { max-width: 260px; }
+            .team-hero-img-wrap img { border-width: 1px; }
+            .team-hero-name { font-size: 24px; letter-spacing: 1px; }
+            .team-hero-role { font-size: 10px; letter-spacing: 1px; }
+            .team-hero-quote { font-size: 10px; max-width: 260px; }
+            .team-hero-info { margin-top: -16px; }
+            .team-puppet-card-img { height: 150px; }
+            .team-puppet-card-title { font-size: 14px; }
+            .team-puppet-card-members { font-size: 10px; }
+            .team-puppet-card-quote { font-size: 10px; }
+            .team-puppet-card-body { padding: 12px; }
+            .team-puppet-card-tape { width: 50px; height: 12px; font-size: 0; }
+            .ingredients-grid { grid-template-columns: repeat(2, 1fr); }
+            .phone-frame { width: 240px; height: 420px; }
+            .phones-grid { gap: 36px; }
+        }
+
+        /* ==============================
+           EVIDENCE STAMP (WATERMARK)
+           ============================== */
+        .stamp {
+            display: inline-block;
+            border: 4px solid var(--danger);
+            color: var(--danger);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 4px;
+            padding: 6px 20px;
+            transform: rotate(-8deg);
+            opacity: 0.7;
+            position: absolute;
+        }
+
+        /* Section alternating bg helper */
+        .bg-alt {
+            background: linear-gradient(180deg, #151515 0%, #1a1a1a 100%);
+        }
+
+        /* Inline element highlight in text */
+        .el-inline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 42px;
+            border: 2px solid var(--toxic);
+            background: rgba(0, 200, 83, 0.1);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            color: var(--white);
+            vertical-align: middle;
+            margin: 0 1px;
+            box-shadow: 0 0 10px var(--toxic-glow);
+            line-height: 1;
+            position: relative;
+        }
+
+        .el-inline .inline-num {
+            position: absolute;
+            top: 1px;
+            left: 3px;
+            font-size: 7px;
+            color: var(--toxic);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== LABORATORY (DRAG & DROP) ===== */
+        .lab-section { background: linear-gradient(180deg, #111 0%, var(--charcoal) 100%); }
+        .lab-bench {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 32px;
+        }
+        .lab-elements-tray {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            max-width: 500px;
+        }
+        .lab-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 82px;
+            border: 2px solid var(--toxic);
+            background: rgba(0,200,83,0.06);
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+        }
+        .lab-chip:active { cursor: grabbing; }
+        .lab-chip:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 18px var(--toxic-glow);
+        }
+        .lab-chip .chip-sym {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            color: var(--white);
+            line-height: 1;
+        }
+        .lab-chip .chip-name {
+            font-size: 8px;
+            color: var(--toxic);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+        .lab-chip .chip-num {
+            position: absolute;
+            top: 3px;
+            left: 5px;
+            font-size: 8px;
+            color: var(--white-dim);
+        }
+        .lab-chip.in-flask {
+            opacity: 0.3;
+            pointer-events: none;
+            border-color: var(--white-dim);
+        }
+        .lab-chip.selected {
+            background: rgba(0,200,83,0.25);
+            border-color: #00e676;
+            box-shadow: 0 0 20px var(--toxic-glow), 0 0 40px rgba(0,200,83,0.2), inset 0 0 12px rgba(0,200,83,0.15);
+            transform: scale(1.08);
+        }
+        .lab-flask-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            min-width: 240px;
+        }
+        .lab-flask {
+            width: 200px;
+            height: 260px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .flask-svg { width: 200px; height: 260px; }
+        .flask-drop-zone {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 100px 30px 50px;
+        }
+        .flask-chip-mini {
+            width: 48px;
+            height: 52px;
+            border: 1px solid var(--toxic);
+            background: rgba(0,200,83,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: chipDrop 0.4s ease-out;
+        }
+        @keyframes chipDrop {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .flask-chip-mini .chip-sym { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--white); line-height: 1; }
+        .flask-chip-mini .chip-name { font-size: 6px; color: var(--toxic); text-transform: uppercase; }
+        .flask-bubbles {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .flask-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0,200,83,0.3);
+            animation: flaskBubbleUp 1.5s ease-in infinite;
+        }
+        @keyframes flaskBubbleUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.7; }
+            100% { transform: translateY(-100px) scale(0.3); opacity: 0; }
+        }
+        .lab-result {
+            text-align: center;
+            min-height: 60px;
+            margin-top: 16px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .lab-result-text {
+            color: var(--toxic);
+            text-shadow: 0 0 12px var(--toxic-glow);
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--toxic);
+            animation: typeResult 1.5s steps(40) forwards, blinkCaret 0.5s step-end infinite alternate;
+            width: 0;
+            display: inline-block;
+        }
+        @keyframes typeResult {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        @keyframes blinkCaret {
+            50% { border-color: transparent; }
+        }
+        .lab-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .lab-btn-reset {
+            padding: 10px 24px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--white-dim);
+            background: transparent;
+            border: 1px solid var(--white-dim);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .lab-btn-reset:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        /* ===== COUNTDOWN TIMER ===== */
+        .countdown-section { background: linear-gradient(180deg, var(--charcoal) 0%, #111 100%); }
+        .countdown-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .countdown-card {
+            width: 120px;
+            border: 2px solid var(--toxic);
+            background: rgba(0,200,83,0.04);
+            padding: 20px 10px;
+            text-align: center;
+            position: relative;
+        }
+        .countdown-card .cd-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--toxic);
+            text-shadow: 0 0 12px var(--toxic-glow);
+            line-height: 1;
+        }
+        .countdown-card .cd-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+        .countdown-card.seconds {
+            animation: secPulse 1s ease-in-out infinite;
+        }
+        @keyframes secPulse {
+            0%, 100% { box-shadow: 0 0 8px var(--toxic-glow); }
+            50% { box-shadow: 0 0 24px var(--toxic-glow), 0 0 40px rgba(0,200,83,0.15); }
+        }
+        .countdown-card .cd-icon {
+            font-size: 16px;
+            color: var(--toxic);
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+
+        /* ===== ANIMATED FORMULA ===== */
+        .formula-section {
+            background: linear-gradient(180deg, #111 0%, var(--charcoal) 100%);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .formula-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .formula-el {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            height: 100px;
+            border: 2px solid var(--toxic);
+            background: rgba(0,200,83,0.06);
+            opacity: 0;
+            transform: translateY(60px) rotate(15deg);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .formula-el.assembled {
+            opacity: 1;
+            transform: translateY(0) rotate(0);
+        }
+        .formula-el .f-sym {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--white);
+            line-height: 1;
+        }
+        .formula-el .f-name {
+            font-size: 9px;
+            color: var(--toxic);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .formula-op {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--toxic);
+            opacity: 0;
+            transform: scale(0.3);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .formula-op.assembled {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .formula-result {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--toxic);
+            opacity: 0;
+            transform: translateX(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            text-shadow: none;
+        }
+        .formula-result.assembled {
+            opacity: 1;
+            transform: translateX(0);
+            text-shadow: 0 0 20px var(--toxic-glow), 0 0 40px rgba(0,200,83,0.3);
+            animation: resultGlow 2s ease-in-out infinite;
+        }
+        @keyframes resultGlow {
+            0%, 100% { text-shadow: 0 0 20px var(--toxic-glow), 0 0 40px rgba(0,200,83,0.3); }
+            50% { text-shadow: 0 0 30px var(--toxic-glow), 0 0 60px rgba(0,200,83,0.5), 0 0 80px rgba(0,200,83,0.2); }
+        }
+        .formula-subtitle {
+            text-align: center;
+            margin-top: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--white-dim);
+            opacity: 0;
+            transition: opacity 0.8s 0.5s;
+        }
+        .formula-subtitle.assembled { opacity: 1; }
+
+        /* ===== EVIDENCE BOARD (POLICE DOSSIER) ===== */
+        .evidence-section {
+            background: linear-gradient(180deg, var(--charcoal) 0%, #1e1b16 50%, var(--charcoal) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .evidence-section::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(139,90,43,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139,90,43,0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .evidence-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 40px;
+            position: relative;
+        }
+        .evidence-item {
+            background: rgba(30,27,22,0.8);
+            border: 1px solid rgba(139,90,43,0.3);
+            padding: 28px 20px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        .evidence-item:nth-child(1) { transform: rotate(-1.5deg); }
+        .evidence-item:nth-child(2) { transform: rotate(0.8deg); }
+        .evidence-item:nth-child(3) { transform: rotate(-0.5deg); }
+        .evidence-item:nth-child(4) { transform: rotate(1.2deg); }
+        .evidence-item:nth-child(5) { transform: rotate(-0.8deg); }
+        .evidence-item:hover { transform: rotate(0deg) scale(1.03); }
+        .evidence-item .evidence-tape {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 80px;
+            height: 16px;
+            background: rgba(255,214,0,0.5);
+            z-index: 2;
+            font-size: 0;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+        }
+        .evidence-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 14px;
+            color: var(--amber);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        .evidence-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: var(--toxic);
+            opacity: 0.7;
+        }
+        .evidence-stat {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .evidence-stat .counter-num {
+            display: inline-block;
+        }
+        .evidence-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--white-dim);
+            line-height: 1.5;
+        }
+        .evidence-string {
+            position: absolute;
+            background: var(--danger);
+            height: 1px;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+            transform-origin: left center;
+        }
+        @media (max-width: 768px) {
+            .evidence-board { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .lab-bench { flex-direction: column; align-items: center; }
+            .lab-elements-tray { max-width: 100%; }
+            .countdown-card { width: 80px; padding: 14px 6px; }
+            .countdown-card .cd-num { font-size: 28px; }
+            .formula-el { width: 70px; height: 78px; }
+            .formula-el .f-sym { font-size: 24px; }
+            .formula-op { font-size: 32px; }
+            .formula-result { font-size: 32px; }
+        }
+        @media (max-width: 480px) {
+            .evidence-board { grid-template-columns: 1fr; }
+            .countdown-grid { gap: 10px; }
+            .countdown-card { width: 70px; }
+            .countdown-card .cd-num { font-size: 24px; }
+            .lab-chip { width: 60px; height: 68px; }
+            .lab-chip .chip-sym { font-size: 22px; }
+            .formula-track { gap: 8px; }
+            .formula-el { width: 60px; height: 68px; }
+            .formula-el .f-sym { font-size: 20px; }
+            .formula-op { font-size: 24px; }
+            .formula-result { font-size: 24px; }
+        }
+        /* ===== INTRO OVERLAY ===== */
+        .intro-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 99999;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            overflow: hidden;
+        }
+        .intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .intro-img {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('intro.jpg') center top / contain no-repeat;
+            background-color: #000;
+            opacity: 0;
+            animation: introFadeIn 1.2s ease 0.2s forwards;
+        }
+        .intro-bottom {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px 60px;
+            text-align: center;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.95));
+            width: 100%;
+            padding-top: 120px;
+        }
+        .intro-btn {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 16px 48px;
+            background: transparent;
+            border: 2px solid #00c853;
+            color: #00c853;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: introFadeIn 0.8s ease 1s forwards, introPulse 2s ease 2s infinite;
+        }
+        .intro-btn:hover {
+            background: #00c853;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0,200,83,0.5);
+        }
+        @keyframes introFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes introPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0,200,83,0.2); }
+            50% { box-shadow: 0 0 20px rgba(0,200,83,0.4); }
+        }
+        body.intro-active { overflow: hidden; }
+    </style>
+</head>
+<body class="intro-active">
+    <!-- INTRO OVERLAY -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-img"></div>
+        <div class="intro-bottom">
+            <button class="intro-btn" onclick="launchSite()">Дай посмотреть</button>
+        </div>
+        <audio id="introAudio" preload="auto"><source src="заставка.mp3" type="audio/mpeg"></audio>
+    </div>
+
+    <!-- Cook Meter (scroll progress) -->
+    <div class="cook-meter">
+        <div class="cook-meter-fill" id="cookMeterFill"></div>
+    </div>
+    <div class="cook-meter-label" id="cookMeterLabel">PURITY: 0%</div>
+
+    <!-- Sticky Header -->
+    <header class="sticky-header" id="stickyHeader">
+        <div class="container">
+            <a href="#" class="sticky-header-logo">
+                <div class="mini-element">
+                    <span class="sym">Kt</span>
+                    <span class="nm">career</span>
+                </div>
+                <span class="sticky-header-brand">Карьерный <span>AI</span></span>
+            </a>
+            <nav class="sticky-header-nav">
+                <a href="#features">Функции</a>
+                <a href="#distribution">Дистрибуция</a>
+                <a href="#team">Команда</a>
+                <a href="https://t.me/RostensteinsFilesBot" target="_blank" class="sticky-header-cta">
+                    <i class="fa-solid fa-flask" style="margin-right:4px;"></i> Запуск
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mouse-following toxic glow -->
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <!-- Toxic breathing glow -->
+    <div class="toxic-breathe"></div>
+
+    <!-- CRT Scanlines overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Floating molecules (SVG, animated) -->
+    <div class="floating-molecule" id="mol1" style="left:3%;top:25%;width:90px;height:90px;animation-duration:25s;">
+        <svg viewBox="0 0 90 90" width="90" height="90">
+            <circle class="atom-fill" cx="20" cy="20" r="8"/><circle cx="20" cy="20" r="8"/>
+            <circle class="atom-fill" cx="70" cy="15" r="6"/><circle cx="70" cy="15" r="6"/>
+            <circle class="atom-fill" cx="45" cy="70" r="7"/><circle cx="45" cy="70" r="7"/>
+            <circle class="atom-fill" cx="75" cy="65" r="5"/><circle cx="75" cy="65" r="5"/>
+            <line x1="20" y1="20" x2="70" y2="15"/>
+            <line x1="20" y1="20" x2="45" y2="70"/>
+            <line x1="70" y1="15" x2="75" y2="65"/>
+            <line x1="45" y1="70" x2="75" y2="65"/>
+        </svg>
+    </div>
+    <div class="floating-molecule" id="mol2" style="right:5%;top:55%;width:70px;height:70px;animation-duration:30s;animation-delay:-8s;">
+        <svg viewBox="0 0 70 70" width="70" height="70">
+            <circle class="atom-fill" cx="35" cy="10" r="7"/><circle cx="35" cy="10" r="7"/>
+            <circle class="atom-fill" cx="10" cy="55" r="6"/><circle cx="10" cy="55" r="6"/>
+            <circle class="atom-fill" cx="60" cy="55" r="6"/><circle cx="60" cy="55" r="6"/>
+            <line x1="35" y1="10" x2="10" y2="55"/>
+            <line x1="35" y1="10" x2="60" y2="55"/>
+            <line x1="10" y1="55" x2="60" y2="55"/>
+        </svg>
+    </div>
+    <div class="floating-molecule" id="mol3" style="left:85%;top:10%;width:60px;height:60px;animation-duration:35s;animation-delay:-15s;">
+        <svg viewBox="0 0 60 60" width="60" height="60">
+            <circle class="atom-fill" cx="30" cy="5" r="5"/><circle cx="30" cy="5" r="5"/>
+            <circle class="atom-fill" cx="5" cy="50" r="5"/><circle cx="5" cy="50" r="5"/>
+            <circle class="atom-fill" cx="55" cy="50" r="5"/><circle cx="55" cy="50" r="5"/>
+            <circle class="atom-fill" cx="30" cy="35" r="4"/><circle cx="30" cy="35" r="4"/>
+            <line x1="30" y1="5" x2="30" y2="35"/>
+            <line x1="30" y1="35" x2="5" y2="50"/>
+            <line x1="30" y1="35" x2="55" y2="50"/>
+        </svg>
+    </div>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+        <div class="grid-bg"></div>
+        <div class="smoke-container">
+            <div class="smoke"></div>
+            <div class="smoke smoke-layer-2"></div>
+            <div class="smoke smoke-layer-3"></div>
+            <div class="smoke smoke-layer-4"></div>
+            <div class="smoke smoke-layer-5"></div>
+        </div>
+
+        <!-- Fog particles -->
+        <div class="fog-particle" style="width:200px;height:200px;top:10%;left:5%;--dx:100px;--dy:-80px;animation-duration:10s;animation-delay:0s;"></div>
+        <div class="fog-particle" style="width:150px;height:150px;top:50%;right:10%;--dx:-60px;--dy:-120px;animation-duration:14s;animation-delay:2s;"></div>
+        <div class="fog-particle" style="width:180px;height:180px;top:70%;left:40%;--dx:50px;--dy:-100px;animation-duration:12s;animation-delay:4s;"></div>
+        <div class="fog-particle" style="width:120px;height:120px;top:20%;right:30%;--dx:-80px;--dy:-60px;animation-duration:16s;animation-delay:1s;"></div>
+        <div class="fog-particle" style="width:250px;height:250px;top:60%;left:15%;--dx:80px;--dy:-140px;animation-duration:18s;animation-delay:3s;"></div>
+        <div class="fog-particle" style="width:160px;height:160px;top:30%;right:5%;--dx:-100px;--dy:-90px;animation-duration:13s;animation-delay:5s;"></div>
+
+        <!-- Molecule decoration left -->
+        <div class="mol-deco" style="left: 5%; top: 30%;">
+            <div class="mol-node" style="top: 0; left: 0;"></div>
+            <div class="mol-node" style="top: 40px; left: 50px;"></div>
+            <div class="mol-node" style="top: -10px; left: 90px;"></div>
+            <div class="mol-line" style="top: 5px; left: 10px; width: 55px; transform: rotate(38deg);"></div>
+            <div class="mol-line" style="top: 35px; left: 55px; width: 50px; transform: rotate(-45deg);"></div>
+        </div>
+
+        <!-- Molecule decoration right -->
+        <div class="mol-deco" style="right: 8%; top: 20%;">
+            <div class="mol-node" style="top: 0; left: 0;"></div>
+            <div class="mol-node" style="top: 50px; left: -30px;"></div>
+            <div class="mol-node" style="top: 30px; left: 60px;"></div>
+            <div class="mol-node" style="top: 80px; left: 40px;"></div>
+            <div class="mol-line" style="top: 5px; left: 0; width: 45px; transform: rotate(110deg);"></div>
+            <div class="mol-line" style="top: 5px; left: 5px; width: 65px; transform: rotate(25deg);"></div>
+            <div class="mol-line" style="top: 35px; left: 60px; width: 45px; transform: rotate(110deg);"></div>
+        </div>
+
+        <div class="hero-content container">
+            <div class="formula hero-formula reveal">
+                C<sub>areer</sub> + AI &rarr; Success &uarr;
+            </div>
+
+            <div class="hero-title-row reveal" style="margin-bottom: 0;">
+                <span class="el-inline" style="width:52px;height:56px;font-size:30px;">
+                    <span class="inline-num">56</span>Ка
+                </span>
+                <span class="hero-title-text">рьерный</span>
+            </div>
+            <div class="hero-title-row reveal" style="margin-bottom: 16px;">
+                <span class="el-inline" style="width:52px;height:56px;font-size:30px;">
+                    <span class="inline-num">81</span>Тр
+                </span>
+                <span class="hero-title-text">ек</span>
+                <span class="hero-title-text" style="color: var(--toxic);margin-left: 16px;">AI</span>
+            </div>
+
+            <div class="hero-subtitle flicker glow-text-amber reveal">
+                Чистейший карьерный план. <span style="color:var(--toxic);">99.1%</span> точность.
+            </div>
+
+            <div class="hero-tagline reveal">
+                AI-бот для молодёжи <span>16-22</span> &mdash; профессии, план, вакансии
+            </div>
+
+            <div class="hero-cta-group reveal">
+                <a href="https://t.me/RostensteinsFilesBot" class="btn-toxic" target="_blank">
+                    <i class="fa-solid fa-flask" style="margin-right:8px;"></i> Начать синтез
+                </a>
+                <a href="/download/apk" class="btn-outline" download>
+                    <i class="fa-brands fa-android" style="margin-right:8px;"></i> Скачать APK
+                </a>
+            </div>
+
+            <div class="hero-badges reveal">
+                <a href="https://t.me/RostensteinsFilesBot" target="_blank" class="hero-badge" style="text-decoration:none;cursor:pointer;"><i class="fa-brands fa-telegram"></i> Telegram Bot</a>
+                <a href="/app" target="_blank" class="hero-badge" style="text-decoration:none;cursor:pointer;"><i class="fa-solid fa-mobile-screen"></i> Mini App</a>
+                <a href="/download/apk" download class="hero-badge" style="text-decoration:none;cursor:pointer;"><i class="fa-brands fa-android"></i> APK</a>
+            </div>
+        </div>
+
+        <!-- Bubbles -->
+        <div class="bubble-container">
+            <div class="bubble" style="left:10%;animation-delay:0s;animation-duration:2.5s;"></div>
+            <div class="bubble" style="left:25%;animation-delay:0.8s;animation-duration:3s;"></div>
+            <div class="bubble" style="left:50%;animation-delay:1.5s;animation-duration:2.8s;"></div>
+            <div class="bubble" style="left:70%;animation-delay:0.3s;animation-duration:3.2s;"></div>
+            <div class="bubble" style="left:85%;animation-delay:1s;animation-duration:2.6s;"></div>
+            <div class="bubble" style="left:40%;animation-delay:2s;animation-duration:3.5s;"></div>
+            <div class="bubble" style="left:15%;animation-delay:0.5s;animation-duration:2.2s;width:4px;height:4px;"></div>
+            <div class="bubble" style="left:60%;animation-delay:1.8s;animation-duration:3.8s;width:8px;height:8px;"></div>
+            <div class="bubble" style="left:90%;animation-delay:2.5s;animation-duration:2.4s;width:3px;height:3px;"></div>
+        </div>
+    </section>
+
+    <div class="hazard-divider"></div>
+
+    <!-- Chemical reaction transition -->
+    <div class="section-transition" id="trans1">
+        <div class="dissolve-particles"></div>
+    </div>
+
+    <!-- ========== RECIPE ========== -->
+    <section class="recipe-section">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="evidence-tape reveal">EVIDENCE</span>
+            </div>
+            <h2 class="section-title glow-text reveal">Рецепт <span style="color:var(--amber);">Успеха</span></h2>
+            <p class="section-subtitle reveal">
+                <span class="formula">Na<sub>2</sub>Career + AI<sub>catalyst</sub> &rarr; Success<sub>pure</sub> + Profit&uarr;</span>
+            </p>
+            <div style="text-align:center;" class="reveal">
+                <p class="typewriter-quote" data-text="&laquo;Я не ищу работу. Я — опасность. Я тот, кто нанимает.&raquo;">
+                    &laquo;Я не ищу работу. Я — опасность. Я тот, кто нанимает.&raquo;
+                </p>
+            </div>
+
+            <div class="steps-container" style="margin-top: 32px;">
+                <div class="step-card fade-in">
+                    <div class="step-number">01</div>
+                    <div class="step-icon"><i class="fa-solid fa-vial"></i></div>
+                    <div class="step-title">Сбор реагентов</div>
+                    <div class="step-desc">Заполни профиль: возраст, интересы, навыки, мечты. Это сырьё для синтеза твоей карьеры.</div>
+                    <div class="step-formula formula">C<sub>profile</sub> + Data<sub>raw</sub></div>
+                </div>
+
+                <div class="step-card fade-in" style="transition-delay:0.1s;">
+                    <div class="step-number">02</div>
+                    <div class="step-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                    <div class="step-title">Катализатор</div>
+                    <div class="step-desc">DeepSeek AI анализирует твой профиль, запускает нейросеть и подбирает идеальные профессии.</div>
+                    <div class="step-formula formula">AI<sub>deep</sub> &middot; &Delta;T</div>
+                </div>
+
+                <div class="step-card fade-in" style="transition-delay:0.2s;">
+                    <div class="step-number">03</div>
+                    <div class="step-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                    <div class="step-title">Синтез</div>
+                    <div class="step-desc">Генерация персонального карьерного плана: этапы, сроки, ресурсы, курсы, книги.</div>
+                    <div class="step-formula formula">&rarr; Plan<sub>career</sub>&uarr;</div>
+                </div>
+
+                <div class="step-card fade-in" style="transition-delay:0.3s;">
+                    <div class="step-number">04</div>
+                    <div class="step-icon"><i class="fa-solid fa-gem"></i></div>
+                    <div class="step-title">Результат</div>
+                    <div class="step-desc">Реальные вакансии с hh.ru, отфильтрованные под твой профиль. Чистый продукт.</div>
+                    <div class="step-formula formula">99.1% <span style="color:var(--amber);">pure</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider thin"></div>
+
+    <!-- ========== LABORATORY (Chemical Reaction Demo) ========== -->
+    <section class="lab-section" id="lab">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="evidence-tape reveal">INTERACTIVE</span>
+            </div>
+            <h2 class="section-title glow-text reveal">ЛАБОРАТОРИЯ</h2>
+            <p class="section-subtitle reveal">Смешай элементы &mdash; узнай профессию</p>
+
+            <div class="lab-bench reveal">
+                <div class="lab-elements-tray" id="labTray">
+                    <div class="lab-chip" data-el="Код" data-sym="Co"><span class="chip-num">1</span><span class="chip-sym">Co</span><span class="chip-name">Код</span></div>
+                    <div class="lab-chip" data-el="Дизайн" data-sym="Ds"><span class="chip-num">2</span><span class="chip-sym">Ds</span><span class="chip-name">Дизайн</span></div>
+                    <div class="lab-chip" data-el="Бизнес" data-sym="Bz"><span class="chip-num">3</span><span class="chip-sym">Bz</span><span class="chip-name">Бизнес</span></div>
+                    <div class="lab-chip" data-el="Данные" data-sym="Dt"><span class="chip-num">4</span><span class="chip-sym">Dt</span><span class="chip-name">Данные</span></div>
+                    <div class="lab-chip" data-el="Люди" data-sym="Ld"><span class="chip-num">5</span><span class="chip-sym">Ld</span><span class="chip-name">Люди</span></div>
+                    <div class="lab-chip" data-el="Творч." data-sym="Tv"><span class="chip-num">6</span><span class="chip-sym">Tv</span><span class="chip-name">Творч.</span></div>
+                    <div class="lab-chip" data-el="Логика" data-sym="Lg"><span class="chip-num">7</span><span class="chip-sym">Lg</span><span class="chip-name">Логика</span></div>
+                    <div class="lab-chip" data-el="Текст" data-sym="Tx"><span class="chip-num">8</span><span class="chip-sym">Tx</span><span class="chip-name">Текст</span></div>
+                    <div class="lab-chip" data-el="Железо" data-sym="Fe"><span class="chip-num">9</span><span class="chip-sym">Fe</span><span class="chip-name">Железо</span></div>
+                    <div class="lab-chip" data-el="Игры" data-sym="Ig"><span class="chip-num">10</span><span class="chip-sym">Ig</span><span class="chip-name">Игры</span></div>
+                </div>
+
+                <div class="lab-flask-area">
+                    <div class="lab-flask">
+                        <svg class="flask-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M75 10 L75 90 L20 220 Q15 240 35 250 L165 250 Q185 240 180 220 L125 90 L125 10 Z" fill="rgba(0,200,83,0.04)" stroke="var(--toxic)" stroke-width="2" />
+                            <line x1="75" y1="10" x2="125" y2="10" stroke="var(--toxic)" stroke-width="3"/>
+                        </svg>
+                        <div class="flask-bubbles" id="labFlaskBubbles"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-result" id="labResult"></div>
+
+            <div class="lab-actions">
+                <button class="lab-btn-reset" id="labReset">Сбросить</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider"></div>
+
+    <!-- Chemical reaction transition -->
+    <div class="section-transition" id="trans2">
+        <div class="dissolve-particles"></div>
+    </div>
+
+    <!-- ========== FEATURES (PERIODIC TABLE) ========== -->
+    <section class="features-section" id="features">
+        <!-- Liquid / bubbling background -->
+        <div class="liquid-bg" id="liquidBg">
+            <div class="liquid-wave"></div>
+        </div>
+
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="section-label reveal">Каталог элементов</span>
+            </div>
+            <h2 class="section-title reveal">Периодическая таблица <span style="color:var(--toxic);">функций</span></h2>
+            <p class="section-subtitle formula reveal">
+                Kt = f(Profile, AI, Data) &middot; &eta;
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-element">
+                        <span class="el-number">1</span>
+                        <span class="el-symbol">Пр</span>
+                        <span class="el-name">Профессии</span>
+                        <span class="el-weight">92.41</span>
+                    </div>
+                    <div class="feature-title">Подбор профессий</div>
+                    <div class="feature-desc">AI анализирует интересы и навыки, выдаёт топ-5 подходящих профессий с описанием и перспективами роста.</div>
+                </div>
+
+                <div class="feature-card fade-in" style="transition-delay:0.1s;">
+                    <div class="feature-element">
+                        <span class="el-number">2</span>
+                        <span class="el-symbol">Кп</span>
+                        <span class="el-name">Карьерный план</span>
+                        <span class="el-weight">137.33</span>
+                    </div>
+                    <div class="feature-title">Карьерный план</div>
+                    <div class="feature-desc">Персональная дорожная карта: от текущей точки до работы мечты. Этапы, курсы, навыки, таймлайн.</div>
+                </div>
+
+                <div class="feature-card fade-in" style="transition-delay:0.2s;">
+                    <div class="feature-element">
+                        <span class="el-number">3</span>
+                        <span class="el-symbol">Вк</span>
+                        <span class="el-name">Вакансии</span>
+                        <span class="el-weight">178.49</span>
+                    </div>
+                    <div class="feature-title">Поиск вакансий</div>
+                    <div class="feature-desc">Интеграция с hh.ru API. Свежие вакансии по твоему профилю, региону и уровню опыта. В реальном времени.</div>
+                </div>
+
+                <div class="feature-card fade-in" style="transition-delay:0.3s;">
+                    <div class="feature-element">
+                        <span class="el-number">4</span>
+                        <span class="el-symbol">Чт</span>
+                        <span class="el-name">AI-Чат</span>
+                        <span class="el-weight">244.06</span>
+                    </div>
+                    <div class="feature-title">AI-консультант</div>
+                    <div class="feature-desc">Чат с нейросетью по карьерным вопросам: резюме, собеседования, выбор вуза, стратегия развития.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider"></div>
+
+    <!-- ========== COUNTDOWN TIMER ========== -->
+    <section class="countdown-section" id="countdown">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="section-label reveal">Таймер</span>
+            </div>
+            <h2 class="section-title glow-text reveal">ДО СЛЕДУЮЩЕЙ ВАРКИ</h2>
+            <p class="section-subtitle reveal">Новая партия вакансий обновляется каждый понедельник</p>
+
+            <div class="countdown-grid reveal">
+                <div class="countdown-card">
+                    <div class="cd-icon"><i class="fa-solid fa-flask"></i></div>
+                    <div class="cd-num" id="cdDays">00</div>
+                    <div class="cd-label">Дней</div>
+                </div>
+                <div class="countdown-card">
+                    <div class="cd-icon"><i class="fa-solid fa-vial"></i></div>
+                    <div class="cd-num" id="cdHours">00</div>
+                    <div class="cd-label">Часов</div>
+                </div>
+                <div class="countdown-card">
+                    <div class="cd-icon"><i class="fa-solid fa-atom"></i></div>
+                    <div class="cd-num" id="cdMinutes">00</div>
+                    <div class="cd-label">Минут</div>
+                </div>
+                <div class="countdown-card seconds">
+                    <div class="cd-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                    <div class="cd-num" id="cdSeconds">00</div>
+                    <div class="cd-label">Секунд</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider thin"></div>
+
+    <!-- Chemical reaction transition -->
+    <div class="section-transition" id="trans3">
+        <div class="dissolve-particles"></div>
+    </div>
+
+    <!-- ========== DISTRIBUTION POINTS (PHONE MOCKUPS) ========== -->
+    <section class="distribution-section" id="distribution">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="evidence-tape reveal">Top Secret</span>
+            </div>
+            <h2 class="section-title reveal">
+                <span class="element-box" style="--el-color:var(--toxic);">
+                    <span class="number">56</span>
+                    <span class="symbol">To</span>
+                    <span class="name">Точки</span>
+                </span>ЧКИ РАСПРОСТРАНЕНИЯ
+            </h2>
+            <p class="section-subtitle reveal">Продукт доступен через все каналы дистрибуции</p>
+            <div style="text-align:center;" class="reveal">
+                <p class="typewriter-quote" data-text="&laquo;Я тот, кто скачивает приложение.&raquo;">
+                    &laquo;Я тот, кто скачивает приложение.&raquo;
+                </p>
+            </div>
+
+            <div class="phones-grid" style="margin-top: 40px;">
+
+                <!-- Phone 1: Telegram Bot -->
+                <div class="phone-wrapper fade-in">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="tg-screen">
+                                <div class="tg-header">
+                                    <div class="tg-avatar"><i class="fa-solid fa-flask"></i></div>
+                                    <div>
+                                        <div class="tg-bot-name">ProTrack Bot</div>
+                                        <div class="tg-bot-status">online</div>
+                                    </div>
+                                </div>
+                                <div class="tg-messages">
+                                    <div class="tg-msg bot">Добро пожаловать в лабораторию. Чем могу помочь?</div>
+                                    <div class="tg-msg user">/start</div>
+                                    <div class="tg-msg bot">Выберите действие:</div>
+                                </div>
+                                <div class="tg-buttons">
+                                    <div class="tg-btn"><i class="fa-solid fa-briefcase"></i> Найти вакансии</div>
+                                    <div class="tg-btn"><i class="fa-solid fa-file-lines"></i> Моё резюме</div>
+                                    <div class="tg-btn"><i class="fa-solid fa-brain"></i> AI-консультант</div>
+                                </div>
+                                <div class="tg-input-bar">
+                                    <div class="tg-input">Сообщение...</div>
+                                    <div class="tg-send"><i class="fa-solid fa-paper-plane"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-label">Telegram бот</div>
+                </div>
+
+                <!-- Phone 2: Mini App -->
+                <div class="phone-wrapper fade-in" style="transition-delay:0.15s;">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="miniapp-screen">
+                                <div class="miniapp-header">
+                                    <div class="miniapp-logo">PROTRACK</div>
+                                    <div class="miniapp-subtitle">CAREER AI</div>
+                                </div>
+                                <div class="miniapp-cards">
+                                    <div class="miniapp-card">
+                                        <div class="miniapp-card-title"><i class="fa-solid fa-flask" style="margin-right:6px;"></i>Вакансии</div>
+                                        <div class="miniapp-card-desc">12 новых предложений по вашему профилю</div>
+                                        <div class="miniapp-card-badge">НОВОЕ</div>
+                                    </div>
+                                    <div class="miniapp-card">
+                                        <div class="miniapp-card-title"><i class="fa-solid fa-atom" style="margin-right:6px;"></i>AI Анализ</div>
+                                        <div class="miniapp-card-desc">Оценка резюме: 87% совместимости</div>
+                                        <div class="miniapp-card-badge">AI</div>
+                                    </div>
+                                    <div class="miniapp-card">
+                                        <div class="miniapp-card-title"><i class="fa-solid fa-chart-line" style="margin-right:6px;"></i>Трекер</div>
+                                        <div class="miniapp-card-desc">3 отклика, 1 приглашение</div>
+                                        <div class="miniapp-card-badge">АКТИВНО</div>
+                                    </div>
+                                </div>
+                                <div class="miniapp-navbar">
+                                    <div class="miniapp-nav-item active"><i class="fa-solid fa-house"></i>Главная</div>
+                                    <div class="miniapp-nav-item"><i class="fa-solid fa-magnifying-glass"></i>Поиск</div>
+                                    <div class="miniapp-nav-item"><i class="fa-solid fa-bookmark"></i>Избранное</div>
+                                    <div class="miniapp-nav-item"><i class="fa-solid fa-user"></i>Профиль</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-label">Mini App</div>
+                </div>
+
+                <!-- Phone 3: APK -->
+                <div class="phone-wrapper fade-in" style="transition-delay:0.3s;">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="apk-screen">
+                                <div class="android-status-bar">
+                                    <span>12:34</span>
+                                    <div class="status-icons">
+                                        <i class="fa-solid fa-signal"></i>
+                                        <i class="fa-solid fa-wifi"></i>
+                                        <i class="fa-solid fa-battery-three-quarters"></i>
+                                    </div>
+                                </div>
+                                <div class="apk-header">
+                                    <div class="apk-header-back"><i class="fa-solid fa-arrow-left"></i></div>
+                                    <div class="apk-header-title">PROTRACK</div>
+                                </div>
+                                <div class="apk-content">
+                                    <div class="apk-card">
+                                        <div class="apk-card-icon"><i class="fa-solid fa-briefcase"></i></div>
+                                        <div class="apk-card-info">
+                                            <div class="apk-card-name">Вакансии рядом</div>
+                                            <div class="apk-card-meta">12 результатов - обновлено 5 мин назад</div>
+                                        </div>
+                                    </div>
+                                    <div class="apk-card">
+                                        <div class="apk-card-icon"><i class="fa-solid fa-file-lines"></i></div>
+                                        <div class="apk-card-info">
+                                            <div class="apk-card-name">Конструктор резюме</div>
+                                            <div class="apk-card-meta">AI-шаблоны - 4 формата</div>
+                                        </div>
+                                    </div>
+                                    <div class="apk-card">
+                                        <div class="apk-card-icon"><i class="fa-solid fa-bell"></i></div>
+                                        <div class="apk-card-info">
+                                            <div class="apk-card-name">Уведомления</div>
+                                            <div class="apk-card-meta">Push - мгновенные оповещения</div>
+                                        </div>
+                                    </div>
+                                    <div class="apk-card">
+                                        <div class="apk-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                                        <div class="apk-card-info">
+                                            <div class="apk-card-name">Офлайн режим</div>
+                                            <div class="apk-card-meta">Работает без интернета</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="apk-fab"><i class="fa-solid fa-plus"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-label">Android APK</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider thin"></div>
+
+    <!-- ========== ANIMATED FORMULA ========== -->
+    <section class="formula-section" id="formulaSection">
+        <div class="container" style="text-align:center;">
+            <div class="formula-track" id="formulaTrack">
+                <div class="formula-el" data-delay="0">
+                    <span class="f-sym">Pr</span>
+                    <span class="f-name">ProTrack</span>
+                </div>
+                <div class="formula-op" data-delay="200">+</div>
+                <div class="formula-el" data-delay="400">
+                    <span class="f-sym">AI</span>
+                    <span class="f-name">Нейросеть</span>
+                </div>
+                <div class="formula-op" data-delay="600">+</div>
+                <div class="formula-el" data-delay="800">
+                    <span class="f-sym">hh</span>
+                    <span class="f-name">Вакансии</span>
+                </div>
+                <div class="formula-op" data-delay="1000">&rarr;</div>
+                <div class="formula-result" data-delay="1200">Career&infin;</div>
+            </div>
+            <div class="formula-subtitle" id="formulaSubtitle">Формула успеха. Запатентовано.</div>
+        </div>
+    </section>
+
+    <!-- Chemical reaction transition -->
+    <div class="section-transition" id="trans4">
+        <div class="dissolve-particles"></div>
+    </div>
+
+    <!-- ========== TECH STACK ========== -->
+    <section class="tech-section">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="section-label reveal">Химический состав</span>
+            </div>
+            <h2 class="section-title reveal">Ингредиенты <span style="color:var(--toxic);">продукта</span></h2>
+            <p class="section-subtitle formula reveal">
+                Tech = &Sigma;(Framework<sub>i</sub> &middot; API<sub>j</sub>) / Complexity
+            </p>
+
+            <div class="ingredients-grid">
+                <div class="ingredient fade-in">
+                    <div class="ingredient-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="ingredient-name">DeepSeek AI</div>
+                    <div class="ingredient-role">Нейросеть / LLM</div>
+                    <div class="ingredient-formula">AI &middot; &infin;</div>
+                </div>
+
+                <div class="ingredient fade-in" style="transition-delay:0.05s;">
+                    <div class="ingredient-icon"><i class="fa-brands fa-telegram"></i></div>
+                    <div class="ingredient-name">Telegram API</div>
+                    <div class="ingredient-role">Бот-платформа</div>
+                    <div class="ingredient-formula">Bot<sub>v7</sub></div>
+                </div>
+
+                <div class="ingredient fade-in" style="transition-delay:0.1s;">
+                    <div class="ingredient-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="ingredient-name">hh.ru API</div>
+                    <div class="ingredient-role">Вакансии</div>
+                    <div class="ingredient-formula">Job<sub>api</sub></div>
+                </div>
+
+                <div class="ingredient fade-in" style="transition-delay:0.15s;">
+                    <div class="ingredient-icon"><i class="fa-brands fa-react"></i></div>
+                    <div class="ingredient-name">React</div>
+                    <div class="ingredient-role">Mini App / Frontend</div>
+                    <div class="ingredient-formula">UI<sub>18</sub></div>
+                </div>
+
+                <div class="ingredient fade-in" style="transition-delay:0.2s;">
+                    <div class="ingredient-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="ingredient-name">FastAPI</div>
+                    <div class="ingredient-role">Backend</div>
+                    <div class="ingredient-formula">Py<sub>fast</sub></div>
+                </div>
+
+                <div class="ingredient fade-in" style="transition-delay:0.25s;">
+                    <div class="ingredient-icon"><i class="fa-brands fa-python"></i></div>
+                    <div class="ingredient-name">Python</div>
+                    <div class="ingredient-role">Core Language</div>
+                    <div class="ingredient-formula">Py<sub>3.12</sub></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider"></div>
+
+    <!-- ========== EVIDENCE BOARD (POLICE DOSSIER STATS) ========== -->
+    <section class="evidence-section" id="evidenceSection">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="evidence-tape reveal">CLASSIFIED</span>
+            </div>
+            <h2 class="section-title reveal">ВЕЩЕСТВЕННЫЕ <span style="color:var(--amber);">ДОКАЗАТЕЛЬСТВА</span></h2>
+            <p class="section-subtitle reveal formula">case_file.open() // status: active</p>
+
+            <div class="evidence-board" id="evidenceBoard">
+                <div class="evidence-string" style="top:60px;left:15%;width:200px;transform:rotate(12deg);"></div>
+                <div class="evidence-string" style="top:120px;right:10%;width:180px;transform:rotate(-8deg);background:var(--toxic);"></div>
+                <div class="evidence-string" style="bottom:80px;left:30%;width:220px;transform:rotate(5deg);"></div>
+
+                <div class="evidence-item fade-in">
+                    <div class="evidence-tape"></div>
+                    <div class="evidence-num">УЛИКА #1</div>
+                    <div class="evidence-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="evidence-stat"><span class="counter-num" data-target="2847">0</span></div>
+                    <div class="evidence-desc">субъектов прошли диагностику</div>
+                </div>
+
+                <div class="evidence-item fade-in" style="transition-delay:0.1s;">
+                    <div class="evidence-tape"></div>
+                    <div class="evidence-num">УЛИКА #2</div>
+                    <div class="evidence-icon"><i class="fa-solid fa-flask"></i></div>
+                    <div class="evidence-stat"><span class="counter-num" data-target="1203">0</span></div>
+                    <div class="evidence-desc">карьерных плана синтезировано</div>
+                </div>
+
+                <div class="evidence-item fade-in" style="transition-delay:0.2s;">
+                    <div class="evidence-tape"></div>
+                    <div class="evidence-num">УЛИКА #3</div>
+                    <div class="evidence-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="evidence-stat"><span class="counter-num" data-target="8491">0</span></div>
+                    <div class="evidence-desc">вакансия обнаружена</div>
+                </div>
+
+                <div class="evidence-item fade-in" style="transition-delay:0.3s;">
+                    <div class="evidence-tape"></div>
+                    <div class="evidence-num">УЛИКА #4</div>
+                    <div class="evidence-icon"><i class="fa-solid fa-vial-circle-check"></i></div>
+                    <div class="evidence-stat"><span class="counter-num" data-target="99.1" data-decimal="true">0</span>%</div>
+                    <div class="evidence-desc">чистота рекомендаций</div>
+                </div>
+
+                <div class="evidence-item fade-in" style="transition-delay:0.4s;">
+                    <div class="evidence-tape"></div>
+                    <div class="evidence-num">УЛИКА #5</div>
+                    <div class="evidence-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+                    <div class="evidence-stat"><span class="counter-num" data-target="4">0</span></div>
+                    <div class="evidence-desc">канала дистрибуции</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider thin"></div>
+
+    <!-- Chemical reaction transition -->
+    <div class="section-transition" id="trans5">
+        <div class="dissolve-particles"></div>
+    </div>
+
+    <!-- ========== TEAM ========== -->
+    <section class="team-section" id="team">
+        <div class="container">
+            <!-- Molecule decoration -->
+            <div class="mol-deco" style="right: 3%; top: 10%;">
+                <div class="mol-node" style="top:0;left:0;"></div>
+                <div class="mol-node" style="top:40px;left:60px;"></div>
+                <div class="mol-node" style="top:80px;left:20px;"></div>
+                <div class="mol-line" style="top:5px;left:5px;width:70px;transform:rotate(33deg);"></div>
+                <div class="mol-line" style="top:45px;left:55px;width:55px;transform:rotate(130deg);"></div>
+            </div>
+
+            <div style="text-align:center;margin-bottom:8px;">
+                <span class="evidence-tape reveal">Personnel File</span>
+            </div>
+            <h2 class="section-title reveal">Лабор<span style="color:var(--toxic);">анты</span></h2>
+            <p class="section-subtitle reveal">Кукловод и его марионетки</p>
+
+            <!-- Gustavo Fring — Puppet Master Hero -->
+            <div class="team-hero-img-wrap reveal" style="margin-top: 32px;">
+                <img src="manager.png" alt="Густаво Фринг — Менеджер" />
+            </div>
+            <div class="team-hero-info reveal">
+                <div class="team-hero-name">Никита</div>
+                <div class="team-hero-role">Менеджер</div>
+                <div class="team-hero-quote">&laquo;Управляет империей. Улыбается. Всегда улыбается.&raquo;</div>
+            </div>
+
+            <!-- Puppet strings descend into the two team cards -->
+            <div class="team-strings-area">
+                <div class="team-puppet-cards">
+                    <!-- Developers card -->
+                    <div class="team-puppet-card fade-in">
+                        <div class="team-puppet-card-tape"></div>
+                        <img class="team-puppet-card-img" src="devs.jpeg" alt="Разработчики" />
+                        <div class="team-puppet-card-body">
+                            <div class="team-puppet-card-title">Разработчики</div>
+                            <div class="team-puppet-card-members">
+                                Даниил<br>
+                                Захар
+                            </div>
+                            <div class="team-puppet-card-quote">&laquo;Я тот, кто коммитит.&raquo;</div>
+                        </div>
+                    </div>
+
+                    <!-- Designers card -->
+                    <div class="team-puppet-card fade-in" style="transition-delay:0.15s;">
+                        <div class="team-puppet-card-tape"></div>
+                        <img class="team-puppet-card-img" src="designers.jpeg" alt="Дизайнеры" />
+                        <div class="team-puppet-card-body">
+                            <div class="team-puppet-card-title">Дизайнеры</div>
+                            <div class="team-puppet-card-members">
+                                Ростислав<br>
+                                Максим
+                            </div>
+                            <div class="team-puppet-card-quote">&laquo;Никаких полумер в дизайне.&raquo;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hazard-divider thin"></div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="formula reveal" style="margin-bottom:16px;font-size:12px;">
+                &gt; process.exit(career_track) // v1.0
+            </div>
+
+            <h2 class="footer-title reveal">
+                Время <span class="highlight">варить</span>... карьеру
+            </h2>
+
+            <p class="footer-subtitle reveal">
+                Сделай первый шаг &mdash; запусти бота прямо сейчас
+            </p>
+            <div style="text-align:center;" class="reveal">
+                <p class="typewriter-quote" data-text="&laquo;Лучшая работа — 1 день работаешь, 8 лет отдыхаешь&raquo; &copy; Народная мудрость">
+                    &laquo;Лучшая работа — 1 день работаешь, 8 лет отдыхаешь&raquo; &copy; Народная мудрость
+                </p>
+            </div>
+
+            <div style="margin-bottom: 32px; margin-top: 20px;" class="reveal">
+                <a href="https://t.me/RostensteinsFilesBot" class="btn-toxic" target="_blank">
+                    <i class="fa-brands fa-telegram" style="margin-right:8px;"></i> Запустить бота
+                </a>
+            </div>
+
+            <div class="footer-links reveal">
+                <a href="https://t.me/RostensteinsFilesBot"><i class="fa-brands fa-telegram"></i> Telegram Bot</a>
+                <a href="#features"><i class="fa-solid fa-atom"></i> Функции</a>
+                <a href="#"><i class="fa-solid fa-flask"></i> Mini App</a>
+            </div>
+
+            <div style="margin-bottom:20px;" class="reveal">
+                <span class="formula" style="font-size:11px;">
+                    Made with <span style="color:var(--toxic);">Python</span> + <span style="color:var(--toxic);">AI</span> + <span style="color:var(--amber);">&hearts;</span>
+                </span>
+            </div>
+
+            <div class="footer-copy">
+                &copy; 2026 ProTrack AI &mdash; Все права защищены
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // ===== 0. INTRO =====
+        function launchSite() {
+            const overlay = document.getElementById('introOverlay');
+            const audio = document.getElementById('introAudio');
+            audio.volume = 0.3;
+            try { audio.play(); } catch(e) {}
+            // Fade out last 3 seconds
+            audio.addEventListener('timeupdate', function() {
+                const timeLeft = audio.duration - audio.currentTime;
+                if (timeLeft < 3) {
+                    audio.volume = Math.max(0, (timeLeft / 3) * 0.3);
+                }
+            });
+            overlay.classList.add('hidden');
+            document.body.classList.remove('intro-active');
+        }
+
+        // ===== 1. INTERSECTION OBSERVER (scroll-triggered reveals) =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Trigger typewriter if applicable
+                    const tw = entry.target.querySelector('.typewriter-quote');
+                    if (tw && !tw.classList.contains('typed')) {
+                        tw.classList.add('typed');
+                    }
+                    if (entry.target.classList.contains('typewriter-quote') && !entry.target.classList.contains('typed')) {
+                        entry.target.classList.add('typed');
+                    }
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -60px 0px'
+        });
+
+        document.querySelectorAll('.fade-in, .reveal').forEach(el => revealObserver.observe(el));
+
+        // ===== 2. SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ===== 3. STICKY HEADER =====
+        const stickyHeader = document.getElementById('stickyHeader');
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            if (y > 400) {
+                stickyHeader.classList.add('show');
+            } else {
+                stickyHeader.classList.remove('show');
+            }
+            lastScroll = y;
+        }, { passive: true });
+
+        // ===== 4. COOK METER (scroll progress) =====
+        const cookFill = document.getElementById('cookMeterFill');
+        const cookLabel = document.getElementById('cookMeterLabel');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = Math.min(100, Math.round((scrollTop / docHeight) * 100));
+            cookFill.style.width = pct + '%';
+            cookLabel.textContent = 'PURITY: ' + pct + '%';
+            if (pct > 3) {
+                cookLabel.classList.add('visible');
+            } else {
+                cookLabel.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        // ===== 5. MOUSE-FOLLOWING GLOW =====
+        const mouseGlow = document.getElementById('mouseGlow');
+        let mouseX = -500, mouseY = -500;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        (function animateGlow() {
+            mouseGlow.style.left = mouseX + 'px';
+            mouseGlow.style.top = mouseY + 'px';
+            requestAnimationFrame(animateGlow);
+        })();
+
+        // ===== 6. PARALLAX EFFECT =====
+        const parallaxElements = [];
+        document.querySelectorAll('.mol-deco, .grid-bg, .smoke-container').forEach(el => {
+            parallaxElements.push(el);
+        });
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            parallaxElements.forEach(el => {
+                const speed = 0.15;
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.style.transform = 'translateY(' + (y * speed) + 'px)';
+                }
+            });
+        }, { passive: true });
+
+        // ===== 7. CHEMICAL REACTION TRANSITIONS (dissolve particles) =====
+        document.querySelectorAll('.section-transition .dissolve-particles').forEach(container => {
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'dissolve-particle';
+                p.style.left = (Math.random() * 100) + '%';
+                p.style.top = (Math.random() * 100) + '%';
+                p.style.animationDelay = (Math.random() * 3) + 's';
+                p.style.animationDuration = (2 + Math.random() * 2) + 's';
+                p.style.width = (2 + Math.random() * 4) + 'px';
+                p.style.height = p.style.width;
+                if (Math.random() > 0.6) {
+                    p.style.background = 'var(--amber)';
+                }
+                container.appendChild(p);
+            }
+        });
+
+        // ===== 8. LIQUID BUBBLES IN FEATURES =====
+        const liquidBg = document.getElementById('liquidBg');
+        if (liquidBg) {
+            for (let i = 0; i < 20; i++) {
+                const b = document.createElement('div');
+                b.className = 'liquid-bubble';
+                const size = 4 + Math.random() * 16;
+                b.style.width = size + 'px';
+                b.style.height = size + 'px';
+                b.style.left = (Math.random() * 100) + '%';
+                b.style.bottom = '-20px';
+                b.style.animationDuration = (5 + Math.random() * 10) + 's';
+                b.style.animationDelay = (Math.random() * 8) + 's';
+                liquidBg.appendChild(b);
+            }
+        }
+
+        // ===== 9. FLOATING MOLECULES PARALLAX =====
+        const molecules = document.querySelectorAll('.floating-molecule');
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            molecules.forEach((mol, i) => {
+                const speed = 0.03 + (i * 0.015);
+                mol.style.marginTop = (Math.sin(y * 0.002 + i) * 30) + 'px';
+            });
+        }, { passive: true });
+
+        // ===== 10. LABORATORY — Chemical Reaction Demo =====
+        (function() {
+            const tray = document.getElementById('labTray');
+            if (!tray) return;
+            const chips = tray.querySelectorAll('.lab-chip');
+            const resultDiv = document.getElementById('labResult');
+            const resetBtn = document.getElementById('labReset');
+            const bubblesDiv = document.getElementById('labFlaskBubbles');
+            let selected = [];
+
+            const recipes = {
+                'Код+Логика': 'Backend-разработчик. Чистота: 96.4%',
+                'Логика+Код': 'Backend-разработчик. Чистота: 96.4%',
+                'Код+Дизайн': 'Frontend-разработчик. Чистота: 94.1%',
+                'Дизайн+Код': 'Frontend-разработчик. Чистота: 94.1%',
+                'Дизайн+Творч.': 'UI/UX Дизайнер. Чистота: 97.8%',
+                'Творч.+Дизайн': 'UI/UX Дизайнер. Чистота: 97.8%',
+                'Бизнес+Люди': 'Product Manager. Чистота: 91.2%',
+                'Люди+Бизнес': 'Product Manager. Чистота: 91.2%',
+                'Данные+Логика': 'Data Analyst. Чистота: 95.5%',
+                'Логика+Данные': 'Data Analyst. Чистота: 95.5%',
+                'Текст+Творч.': 'Контент-менеджер. Чистота: 89.7%',
+                'Творч.+Текст': 'Контент-менеджер. Чистота: 89.7%',
+                'Железо+Код': 'DevOps Engineer. Чистота: 93.3%',
+                'Код+Железо': 'DevOps Engineer. Чистота: 93.3%',
+                'Игры+Код': 'Game Developer. Чистота: 98.2%',
+                'Код+Игры': 'Game Developer. Чистота: 98.2%'
+            };
+
+            function spawnBubbles() {
+                if (!bubblesDiv) return;
+                for (let i = 0; i < 6; i++) {
+                    const b = document.createElement('div');
+                    b.className = 'flask-bubble';
+                    const sz = 4 + Math.random() * 8;
+                    b.style.width = sz + 'px';
+                    b.style.height = sz + 'px';
+                    b.style.left = (20 + Math.random() * 80) + 'px';
+                    b.style.bottom = '0';
+                    b.style.animationDelay = (Math.random() * 1) + 's';
+                    b.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+                    bubblesDiv.appendChild(b);
+                    setTimeout(() => b.remove(), 3000);
+                }
+            }
+
+            function showResult(text) {
+                resultDiv.innerHTML = '';
+                const span = document.createElement('span');
+                span.className = 'lab-result-text';
+                span.textContent = text;
+                resultDiv.appendChild(span);
+
+                const link = document.createElement('a');
+                link.href = 'https://t.me/RostensteinsFilesBot';
+                link.target = '_blank';
+                link.className = 'btn-outline';
+                link.style.cssText = 'margin-top:16px;display:inline-block;font-size:14px;padding:8px 20px;';
+                link.innerHTML = '<i class="fa-solid fa-flask" style="margin-right:6px;"></i> Полный анализ &rarr;';
+                resultDiv.appendChild(link);
+            }
+
+            chips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    if (selected.length >= 2) return;
+                    if (chip.classList.contains('selected')) {
+                        chip.classList.remove('selected');
+                        selected = selected.filter(s => s !== chip.dataset.el);
+                        return;
+                    }
+                    chip.classList.add('selected');
+                    selected.push(chip.dataset.el);
+                    spawnBubbles();
+
+                    if (selected.length === 2) {
+                        const key = selected[0] + '+' + selected[1];
+                        const result = recipes[key] || 'Неизвестное соединение. Требуется анализ в боте.';
+                        setTimeout(() => showResult(result), 400);
+                    }
+                });
+            });
+
+            resetBtn.addEventListener('click', () => {
+                selected = [];
+                chips.forEach(c => c.classList.remove('selected'));
+                resultDiv.innerHTML = '';
+            });
+        })();
+
+        // ===== 11. COUNTDOWN TIMER =====
+        (function() {
+            const daysEl = document.getElementById('cdDays');
+            const hoursEl = document.getElementById('cdHours');
+            const minutesEl = document.getElementById('cdMinutes');
+            const secondsEl = document.getElementById('cdSeconds');
+            if (!daysEl) return;
+
+            function getNextMonday9am() {
+                const now = new Date();
+                const day = now.getDay(); // 0=Sun, 1=Mon
+                let daysUntilMon = (1 - day + 7) % 7;
+                if (daysUntilMon === 0) {
+                    // It's Monday — check if past 9am
+                    if (now.getHours() >= 9) daysUntilMon = 7;
+                }
+                const target = new Date(now);
+                target.setDate(target.getDate() + daysUntilMon);
+                target.setHours(9, 0, 0, 0);
+                return target;
+            }
+
+            function updateCountdown() {
+                const now = new Date();
+                const target = getNextMonday9am();
+                let diff = Math.max(0, Math.floor((target - now) / 1000));
+
+                const d = Math.floor(diff / 86400); diff %= 86400;
+                const h = Math.floor(diff / 3600); diff %= 3600;
+                const m = Math.floor(diff / 60);
+                const s = diff % 60;
+
+                daysEl.textContent = String(d).padStart(2, '0');
+                hoursEl.textContent = String(h).padStart(2, '0');
+                minutesEl.textContent = String(m).padStart(2, '0');
+                secondsEl.textContent = String(s).padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        })();
+
+        // ===== 12. ANIMATED FORMULA (scroll-triggered) =====
+        (function() {
+            const track = document.getElementById('formulaTrack');
+            const subtitle = document.getElementById('formulaSubtitle');
+            if (!track) return;
+
+            const formulaObs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const items = track.querySelectorAll('.formula-el, .formula-op, .formula-result');
+                        items.forEach(item => {
+                            const delay = parseInt(item.dataset.delay) || 0;
+                            setTimeout(() => item.classList.add('assembled'), delay);
+                        });
+                        setTimeout(() => {
+                            if (subtitle) subtitle.classList.add('assembled');
+                        }, 1600);
+                        formulaObs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            formulaObs.observe(track);
+        })();
+
+        // ===== 13. EVIDENCE BOARD — counter animation =====
+        (function() {
+            const board = document.getElementById('evidenceBoard');
+            if (!board) return;
+
+            function animateCounter(el) {
+                const target = parseFloat(el.dataset.target);
+                const isDecimal = el.dataset.decimal === 'true';
+                const duration = 2000;
+                const start = performance.now();
+
+                function tick(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // ease out cubic
+                    const ease = 1 - Math.pow(1 - progress, 3);
+                    const current = target * ease;
+                    el.textContent = isDecimal ? current.toFixed(1) : Math.round(current).toLocaleString('ru-RU');
+                    if (progress < 1) requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            }
+
+            const counterObs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counters = entry.target.querySelectorAll('.counter-num');
+                        counters.forEach(c => animateCounter(c));
+                        counterObs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            counterObs.observe(board);
+        })();
+
+        // Re-observe newly added elements for fade-in / reveal
+        document.querySelectorAll('.fade-in, .reveal').forEach(el => {
+            if (!el.classList.contains('visible')) revealObserver.observe(el);
+        });
+    </script>
+</body>
+</html>

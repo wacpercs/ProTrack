@@ -1,0 +1,214 @@
+// lib/screens/career_tab_screen.dart (Breaking Bad theme)
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+
+class CareerTabScreen extends StatefulWidget {
+  final ApiService apiService;
+
+  const CareerTabScreen({Key? key, required this.apiService}) : super(key: key);
+
+  @override
+  State<CareerTabScreen> createState() => _CareerTabScreenState();
+}
+
+class _CareerTabScreenState extends State<CareerTabScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  String _professions = '';
+  String _careerPlan = '';
+  bool _isLoadingProfessions = false;
+  bool _isLoadingPlan = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  Future<void> _loadProfessions() async {
+    setState(() => _isLoadingProfessions = true);
+    _professions = await widget.apiService.getProfessions();
+    setState(() => _isLoadingProfessions = false);
+  }
+
+  Future<void> _loadCareerPlan() async {
+    setState(() => _isLoadingPlan = true);
+    _careerPlan = await widget.apiService.getCareerPlan();
+    setState(() => _isLoadingPlan = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1A1A1A),
+      appBar: AppBar(
+        title: const Text(
+          'Карьера',
+          style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF252525),
+        foregroundColor: Colors.white,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: const Color(0xFF00C853),
+          labelColor: const Color(0xFF00C853),
+          unselectedLabelColor: Colors.grey[500],
+          tabs: const [
+            Tab(text: 'Профессии'),
+            Tab(text: 'Карьерный план'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildProfessionsTab(),
+          _buildCareerPlanTab(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfessionsTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _loadProfessions,
+            icon: const Icon(Icons.auto_awesome),
+            label: const Text('Подобрать профессии'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00C853),
+              foregroundColor: const Color(0xFF1A1A1A),
+              minimumSize: const Size(double.infinity, 48),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'AI проанализирует твои интересы и навыки и подберет подходящие профессии',
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: _isLoadingProfessions
+                ? _buildLoadingAnimation('Анализирую профиль...')
+                : _buildResultCard(_professions),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCareerPlanTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _loadCareerPlan,
+            icon: const Icon(Icons.timeline),
+            label: const Text('Карьерный план'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFFD600),
+              foregroundColor: const Color(0xFF1A1A1A),
+              minimumSize: const Size(double.infinity, 48),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'AI составит план развития карьеры с конкретными ресурсами и сроками',
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: _isLoadingPlan
+                ? _buildLoadingAnimation('Составляю план...')
+                : _buildResultCard(_careerPlan),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingAnimation(String text) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          _buildDotsAnimation(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDotsAnimation() {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (i) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: Color(0xFF00C853),
+                shape: BoxShape.circle,
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+
+  Widget _buildResultCard(String content) {
+    if (content.isEmpty) {
+      return Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF252525),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Center(
+          child: Text(
+            'Нажмите кнопку, чтобы получить рекомендации',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF252525),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SingleChildScrollView(
+        child: Text(content, style: const TextStyle(fontSize: 15, height: 1.5, color: Colors.white)),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+}
