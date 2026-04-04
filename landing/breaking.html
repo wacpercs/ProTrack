@@ -2611,6 +2611,94 @@
             50% { box-shadow: 0 0 20px rgba(0,200,83,0.4); }
         }
         body.intro-active { overflow: hidden; }
+
+        /* ===== HEISENBERG ASSISTANT ===== */
+        .heisenberg-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9990;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .heisenberg-bubble {
+            background: var(--charcoal-light);
+            border: 1px solid var(--toxic-dark);
+            border-radius: 4px;
+            padding: 12px 16px;
+            max-width: 260px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--white-dim);
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s, transform 0.4s;
+            pointer-events: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 15px rgba(0,200,83,0.08);
+        }
+
+        .heisenberg-bubble.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .heisenberg-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 40px;
+            width: 0; height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid var(--charcoal-light);
+        }
+
+        .heisenberg-bubble .accent { color: var(--toxic); font-weight: 700; }
+
+        .heisenberg-close {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+        .heisenberg-close:hover { color: var(--toxic); }
+
+        .heisenberg-agent {
+            width: 100px;
+            height: 120px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.3s, filter 0.3s;
+            filter: drop-shadow(0 0 10px rgba(0,200,83,0.2));
+        }
+
+        .heisenberg-agent:hover {
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 20px rgba(0,200,83,0.5));
+        }
+
+        /* Breathing glow animation */
+        @keyframes heisenGlow {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(0,200,83,0.15)); }
+            50% { filter: drop-shadow(0 0 18px rgba(0,200,83,0.35)); }
+        }
+        .heisenberg-agent { animation: heisenGlow 4s ease-in-out infinite; }
+
+        /* Menacing head tilt */
+        @keyframes heisenTilt {
+            0%, 100% { transform: rotate(0deg); }
+            30% { transform: rotate(-2deg); }
+            70% { transform: rotate(1deg); }
+        }
+        .heisenberg-agent:hover { animation: heisenTilt 2s ease-in-out infinite; }
     </style>
 </head>
 <body class="intro-active">
@@ -3423,6 +3511,100 @@
             </div>
         </div>
     </footer>
+
+    <!-- HEISENBERG ASSISTANT -->
+    <div class="heisenberg-container" id="heisenContainer">
+        <div class="heisenberg-bubble" id="heisenBubble">
+            <span class="heisenberg-close" onclick="dismissHeisen()">&times;</span>
+            <span id="heisenText"></span>
+        </div>
+        <svg class="heisenberg-agent" id="heisenAgent" onclick="nextHeisenMessage()" title="Кликни для совета" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <!-- Hat -->
+            <ellipse cx="50" cy="32" rx="44" ry="8" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+            <path d="M20 32 Q20 8 50 6 Q80 8 80 32" fill="#222" stroke="#333" stroke-width="1"/>
+            <ellipse cx="50" cy="32" rx="44" ry="8" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+            <!-- Hat band -->
+            <rect x="22" y="28" width="56" height="4" rx="2" fill="#333"/>
+            <!-- Head shape -->
+            <ellipse cx="50" cy="68" rx="32" ry="34" fill="#2a2a2a" stroke="#444" stroke-width="1"/>
+            <!-- Glasses -->
+            <rect x="22" y="54" rx="3" width="22" height="16" fill="none" stroke="#00c853" stroke-width="2.5" opacity="0.8"/>
+            <rect x="56" y="54" rx="3" width="22" height="16" fill="none" stroke="#00c853" stroke-width="2.5" opacity="0.8"/>
+            <line x1="44" y1="62" x2="56" y2="62" stroke="#00c853" stroke-width="2" opacity="0.6"/>
+            <!-- Lens glare -->
+            <rect x="24" y="56" width="18" height="12" rx="2" fill="rgba(0,200,83,0.06)"/>
+            <rect x="58" y="56" width="18" height="12" rx="2" fill="rgba(0,200,83,0.06)"/>
+            <line x1="26" y1="58" x2="32" y2="58" stroke="rgba(0,200,83,0.15)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="60" y1="58" x2="66" y2="58" stroke="rgba(0,200,83,0.15)" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Eyes behind glasses (subtle) -->
+            <circle cx="33" cy="63" r="2" fill="rgba(0,200,83,0.3)"/>
+            <circle cx="67" cy="63" r="2" fill="rgba(0,200,83,0.3)"/>
+            <!-- Nose -->
+            <path d="M48 70 L50 78 L52 70" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Goatee/mouth area -->
+            <path d="M40 86 Q50 82 60 86" fill="none" stroke="#555" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Goatee -->
+            <path d="M42 87 Q50 96 58 87" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round"/>
+            <line x1="50" y1="88" x2="50" y2="94" stroke="#444" stroke-width="1.5"/>
+            <!-- Ear hints -->
+            <path d="M18 62 Q14 68 18 74" fill="none" stroke="#444" stroke-width="1.5"/>
+            <path d="M82 62 Q86 68 82 74" fill="none" stroke="#444" stroke-width="1.5"/>
+            <!-- Menacing glow on glasses (animated) -->
+            <rect x="24" y="56" width="18" height="12" rx="2" fill="rgba(0,200,83,0.05)">
+                <animate attributeName="fill" values="rgba(0,200,83,0.03);rgba(0,200,83,0.12);rgba(0,200,83,0.03)" dur="3s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="58" y="56" width="18" height="12" rx="2" fill="rgba(0,200,83,0.05)">
+                <animate attributeName="fill" values="rgba(0,200,83,0.03);rgba(0,200,83,0.12);rgba(0,200,83,0.03)" dur="3s" repeatCount="indefinite"/>
+            </rect>
+        </svg>
+    </div>
+
+    <script>
+    // === HEISENBERG ASSISTANT ===
+    (function() {
+        var messages = [
+            'Я не <span class="accent">ищу работу</span>. Я &mdash; тот, кто нанимает.',
+            'Скажи моё имя. <span class="accent">ProTrack</span>. Ты чертовски прав.',
+            'Ты <span class="accent">уверен</span>, что хочешь искать вакансии без AI? Это было бы... неразумно.',
+            'Чистота продукта &mdash; <span class="accent">99.1%</span>. Как и точность нашего AI.',
+            'Я не в <span class="accent">опасности</span>, Скайлер. Я и есть опасность. И мой карьерный план идеален.',
+            'Каждый выбор ведёт к <span class="accent">последствиям</span>. Выбери правильную профессию.',
+            'В этом бизнесе есть два типа людей: те, кто используют <span class="accent">ProTrack</span>, и те, кто проиграли.',
+            'Тебе нужен <span class="accent">карьерный план</span>? Или ты хочешь всю жизнь работать на автомойке?',
+        ];
+        var idx = 0;
+        var bubble = document.getElementById('heisenBubble');
+        var textEl = document.getElementById('heisenText');
+        var dismissed = false;
+
+        function showMessage(i) {
+            if (dismissed) return;
+            textEl.innerHTML = messages[i % messages.length];
+            bubble.classList.add('visible');
+        }
+
+        setTimeout(function() { showMessage(0); }, 4000);
+
+        setInterval(function() {
+            if (dismissed) return;
+            idx++;
+            bubble.classList.remove('visible');
+            setTimeout(function() { showMessage(idx); }, 400);
+        }, 14000);
+
+        window.nextHeisenMessage = function() {
+            idx++;
+            dismissed = false;
+            bubble.classList.remove('visible');
+            setTimeout(function() { showMessage(idx); }, 200);
+        };
+
+        window.dismissHeisen = function() {
+            dismissed = true;
+            bubble.classList.remove('visible');
+        };
+    })();
+    </script>
 
     <!-- ========== SCRIPTS ========== -->
     <script>
