@@ -1,5 +1,5 @@
 #!/bin/bash
-# Деплой на VPS — career.dimaswife.ru
+# Деплой на VPS — career.say-my-name.ru
 set -e
 
 SERVER="root@89.125.118.57"
@@ -34,13 +34,13 @@ apt-get install -y -qq python3-pip python3-venv certbot python3-certbot-nginx > 
 source venv/bin/activate
 pip install -r requirements.txt -q
 
-# Nginx — добавляем конфиг для career.dimaswife.ru (не трогаем основной сайт)
+# Nginx — добавляем конфиг для career.say-my-name.ru (не трогаем основной сайт)
 cp nginx-career.conf /etc/nginx/sites-available/career-bot
 ln -sf /etc/nginx/sites-available/career-bot /etc/nginx/sites-enabled/career-bot
 nginx -t && systemctl reload nginx
 
 # SSL через certbot (не трогает другие конфиги)
-certbot --nginx -d career.dimaswife.ru --non-interactive --agree-tos --email admin@dimaswife.ru --redirect || echo "Certbot не смог получить сертификат — проверь DNS A-запись"
+certbot --nginx -d career.say-my-name.ru --non-interactive --agree-tos --email admin@say-my-name.ru --redirect || echo "Certbot не смог получить сертификат — проверь DNS A-запись"
 
 # Systemd сервис
 cat > /etc/systemd/system/career-bot.service << 'EOF'
@@ -73,7 +73,7 @@ ENDSSH
 
 echo ""
 echo "=== Деплой завершён ==="
-echo "Mini App: https://career.dimaswife.ru/app"
-echo "API:      https://career.dimaswife.ru/api/profile"
+echo "Mini App: https://career.say-my-name.ru/app"
+echo "API:      https://career.say-my-name.ru/api/profile"
 echo ""
-echo "НЕ ЗАБУДЬ: A-запись career.dimaswife.ru -> 89.125.118.57"
+echo "НЕ ЗАБУДЬ: A-запись career.say-my-name.ru -> 89.125.118.57"

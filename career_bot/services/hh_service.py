@@ -1,7 +1,7 @@
 import aiohttp
 
 HH_API = "https://api.hh.ru"
-HEADERS = {"User-Agent": "CareerTrackBot/1.0 (https://career.dimaswife.ru; career@dimaswife.ru)"}
+HEADERS = {"User-Agent": "CareerTrackBot/1.0 (https://career.say-my-name.ru; career@say-my-name.ru)"}
 
 # Популярные города -> area_id на hh.ru
 CITY_AREA_MAP = {

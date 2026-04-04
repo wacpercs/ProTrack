@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://career.dimaswife.ru/api';
+  static const String baseUrl = 'https://career.say-my-name.ru/api';
 
   String? _authToken;
   int? _userId;
