@@ -96,6 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   InputDecoration _inputDecoration(String label, IconData icon) {
+    final theme = Provider.of<ThemeProvider>(context, listen: false);
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: Colors.grey[500]),
@@ -107,24 +108,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+        borderSide: BorderSide(color: theme.accentColor, width: 2),
       ),
       filled: true,
-      fillColor: const Color(0xFF1A1A1A),
+      fillColor: Theme.of(context).cardColor,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
         title: const Text(
           'Мой профиль',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF252525),
-        foregroundColor: Colors.white,
         actions: [
           if (!_isLoading)
             IconButton(
@@ -134,22 +133,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
-            color: const Color(0xFF252525),
+            color: Theme.of(context).cardColor,
             onSelected: (value) async {
-              if (value == 'about') {
+              if (value == 'theme') {
+                theme.toggleTheme();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Тема: ${theme.isEmo ? "Emo" : "Breaking Bad"}')),
+                );
+              } else if (value == 'about') {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
-                    backgroundColor: const Color(0xFF252525),
-                    title: const Text('О разработчиках', style: TextStyle(color: Colors.white, fontFamily: 'Courier')),
+                    title: const Text('О разработчиках'),
                     content: const Text(
                       'Сазонов Захар\nПаршин Даниил\nКонтакт для связи: Gmail\nZaharsazonov5@gmail.com',
-                      style: TextStyle(fontSize: 16, color: Colors.white70),
+                      style: TextStyle(fontSize: 16),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Закрыть', style: TextStyle(color: Color(0xFF00C853))),
+                        child: Text('Закрыть', style: TextStyle(color: theme.accentColor)),
                       ),
                     ],
                   ),
@@ -162,6 +165,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
             },
             itemBuilder: (_) => [
+              PopupMenuItem<String>(
+                value: 'theme',
+                child: Row(
+                  children: [
+                    Icon(Icons.palette_outlined, color: theme.accentColor),
+                    const SizedBox(width: 12),
+                    Text(
+                      theme.isEmo ? 'Breaking Bad' : 'Emo',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
               const PopupMenuItem<String>(
                 value: 'about',
                 child: Row(
@@ -187,9 +203,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                valueColor: AlwaysStoppedAnimation<Color>(theme.accentColor),
               ),
             )
           : SingleChildScrollView(
@@ -198,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    const Icon(Icons.person, size: 80, color: Color(0xFF00C853)),
+                    Icon(Icons.person, size: 80, color: theme.accentColor),
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: _nameController,
@@ -209,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _gender,
-                      dropdownColor: const Color(0xFF252525),
+                      dropdownColor: Theme.of(context).cardColor,
                       style: const TextStyle(color: Colors.white),
                       decoration: _inputDecoration('Пол', Icons.people_outline),
                       items: const [
@@ -264,19 +280,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ElevatedButton(
                       onPressed: _isSaving ? null : _saveProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00C853),
-                        foregroundColor: const Color(0xFF1A1A1A),
+                        backgroundColor: theme.accentColor,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: _isSaving
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A1A1A)),
+                                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary),
                               ),
                             )
                           : const Text(
@@ -289,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
                           'Профиль создан',
-                          style: TextStyle(color: const Color(0xFF00C853), fontSize: 12),
+                          style: TextStyle(color: theme.accentColor, fontSize: 12),
                         ),
                       ),
                   ],

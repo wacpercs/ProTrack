@@ -136,14 +136,20 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final secondaryColor = theme.colorScheme.secondary;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
+    final cardBg = theme.cardColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
         title: const Text(
           'Поиск вакансий',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF252525),
+        backgroundColor: cardBg,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -162,7 +168,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF252525),
+              color: cardBg,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -192,10 +198,10 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+                            borderSide: BorderSide(color: primaryColor, width: 2),
                           ),
                           filled: true,
-                          fillColor: const Color(0xFF1A1A1A),
+                          fillColor: scaffoldBg,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         onSubmitted: (_) => _search(),
@@ -208,8 +214,8 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                       child: ElevatedButton(
                         onPressed: _search,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00C853),
-                          foregroundColor: const Color(0xFF1A1A1A),
+                          backgroundColor: primaryColor,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -223,7 +229,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   value: _experience,
-                  dropdownColor: const Color(0xFF252525),
+                  dropdownColor: cardBg,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Опыт работы',
@@ -237,10 +243,10 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF1A1A1A),
+                    fillColor: scaffoldBg,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
                   items: const [
@@ -288,15 +294,15 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF00C853).withOpacity(0.15),
+                              color: primaryColor.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${_suggestions.length}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF00C853),
+                                color: primaryColor,
                               ),
                             ),
                           ),
@@ -313,22 +319,22 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                         return ActionChip(
                           label: Text(query, style: const TextStyle(fontSize: 12, color: Colors.white)),
                           onPressed: () => _searchWithSuggestion(query),
-                          backgroundColor: const Color(0xFF1A1A1A),
-                          side: BorderSide(color: const Color(0xFF00C853).withOpacity(0.5)),
-                          avatar: const Icon(Icons.trending_up, size: 16, color: Color(0xFF00C853)),
+                          backgroundColor: scaffoldBg,
+                          side: BorderSide(color: primaryColor.withOpacity(0.5)),
+                          avatar: Icon(Icons.trending_up, size: 16, color: primaryColor),
                         );
                       }).toList(),
                     ),
                   ],
                   const SizedBox(height: 4),
                 ] else if (_isLoadingSuggestions)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: SizedBox(
                       height: 20,
                       child: LinearProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
-                        backgroundColor: Color(0xFF1A1A1A),
+                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                        backgroundColor: scaffoldBg,
                       ),
                     ),
                   ),
@@ -338,9 +344,9 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
           // Список вакансий
           Expanded(
             child: _isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                      valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                     ),
                   )
                 : _vacancies.isEmpty
@@ -362,8 +368,8 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                             if (!_isFirstLoad && _vacancies.isEmpty)
                               TextButton.icon(
                                 onPressed: _loadRecommendedVacancies,
-                                icon: const Icon(Icons.refresh, color: Color(0xFF00C853)),
-                                label: const Text('Показать рекомендуемые', style: TextStyle(color: Color(0xFF00C853))),
+                                icon: Icon(Icons.refresh, color: primaryColor),
+                                label: Text('Показать рекомендуемые', style: TextStyle(color: primaryColor)),
                               ),
                           ],
                         ),
@@ -375,7 +381,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                           final v = _vacancies[i];
                           return Card(
                             margin: const EdgeInsets.only(bottom: 12),
-                            color: const Color(0xFF252525),
+                            color: cardBg,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -404,8 +410,8 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
-                                  border: const Border(
-                                    left: BorderSide(color: Color(0xFF00C853), width: 3),
+                                  border: Border(
+                                    left: BorderSide(color: primaryColor, width: 3),
                                   ),
                                 ),
                                 padding: const EdgeInsets.all(16),
@@ -418,12 +424,12 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                                           width: 48,
                                           height: 48,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF00C853).withOpacity(0.15),
+                                            color: primaryColor.withOpacity(0.15),
                                             borderRadius: BorderRadius.circular(12),
                                           ),
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.work,
-                                            color: Color(0xFF00C853),
+                                            color: primaryColor,
                                             size: 24,
                                           ),
                                         ),
@@ -445,9 +451,9 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                                               const SizedBox(height: 4),
                                               Text(
                                                 v['company'] ?? 'Компания не указана',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 13,
-                                                  color: Color(0xFF00C853),
+                                                  color: primaryColor,
                                                 ),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
@@ -477,14 +483,14 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                                         padding: const EdgeInsets.only(top: 8),
                                         child: Row(
                                           children: [
-                                            const Icon(Icons.currency_ruble_rounded, size: 14, color: Color(0xFFFFD600)),
+                                            Icon(Icons.currency_ruble_rounded, size: 14, color: secondaryColor),
                                             const SizedBox(width: 4),
                                             Text(
                                               v['salary'],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFFFFD600),
+                                                color: secondaryColor,
                                               ),
                                             ),
                                           ],

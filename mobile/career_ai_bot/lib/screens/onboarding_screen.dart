@@ -1,4 +1,4 @@
-// lib/screens/onboarding_screen.dart (Breaking Bad theme)
+// lib/screens/onboarding_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
@@ -45,14 +45,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final secondaryColor = theme.colorScheme.secondary;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
+    final cardBg = theme.cardColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
         title: const Text(
           'Создание профиля',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF252525),
+        backgroundColor: cardBg,
         foregroundColor: Colors.white,
         leading: _currentStep > 0
             ? IconButton(
@@ -62,12 +68,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             : null,
       ),
       body: Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: const Color(0xFF00C853),
+        data: theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(
+            primary: primaryColor,
             onSurface: Colors.white,
           ),
-          canvasColor: const Color(0xFF1A1A1A),
+          canvasColor: scaffoldBg,
         ),
         child: Form(
           key: _formKey,
@@ -84,8 +90,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ElevatedButton(
                       onPressed: details.onStepContinue,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00C853),
-                        foregroundColor: const Color(0xFF1A1A1A),
+                        backgroundColor: primaryColor,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         minimumSize: const Size(120, 45),
                       ),
                       child: Text(
@@ -118,11 +124,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey[700]!),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primaryColor, width: 2),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF252525),
+                        fillColor: cardBg,
                       ),
                       validator: (v) => v!.isEmpty ? 'Введите имя' : null,
                     ),
@@ -134,11 +140,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: ChoiceChip(
                             label: const Text('Мальчик'),
                             selected: _gender == 'male',
-                            selectedColor: const Color(0xFF00C853),
+                            selectedColor: primaryColor,
                             labelStyle: TextStyle(
-                              color: _gender == 'male' ? const Color(0xFF1A1A1A) : Colors.white,
+                              color: _gender == 'male' ? theme.colorScheme.onPrimary : Colors.white,
                             ),
-                            backgroundColor: const Color(0xFF252525),
+                            backgroundColor: cardBg,
                             onSelected: (s) => setState(() => _gender = s ? 'male' : null),
                           ),
                         ),
@@ -147,11 +153,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: ChoiceChip(
                             label: const Text('Девочка'),
                             selected: _gender == 'female',
-                            selectedColor: const Color(0xFF00C853),
+                            selectedColor: primaryColor,
                             labelStyle: TextStyle(
-                              color: _gender == 'female' ? const Color(0xFF1A1A1A) : Colors.white,
+                              color: _gender == 'female' ? theme.colorScheme.onPrimary : Colors.white,
                             ),
-                            backgroundColor: const Color(0xFF252525),
+                            backgroundColor: cardBg,
                             onSelected: (s) => setState(() => _gender = s ? 'female' : null),
                           ),
                         ),
@@ -176,11 +182,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey[700]!),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF252525),
+                    fillColor: cardBg,
                   ),
                   onChanged: (v) => _age = int.tryParse(v),
                   validator: (v) {
@@ -206,11 +212,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey[700]!),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF252525),
+                    fillColor: cardBg,
                   ),
                   validator: (v) => v!.isEmpty ? 'Введите город' : null,
                 ),
@@ -222,7 +228,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 subtitle: const Text('Твое образование', style: TextStyle(color: Colors.grey)),
                 content: DropdownButtonFormField<String>(
                   value: _education,
-                  dropdownColor: const Color(0xFF252525),
+                  dropdownColor: cardBg,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Образование',
@@ -231,11 +237,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey[700]!),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF252525),
+                    fillColor: cardBg,
                   ),
                   items: _educationOptions.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                   onChanged: (v) => setState(() => _education = v),
@@ -260,11 +266,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey[700]!),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF252525),
+                    fillColor: cardBg,
                   ),
                 ),
                 isActive: _currentStep >= 4,
@@ -286,11 +292,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey[700]!),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF00C853), width: 2),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor, width: 2),
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF252525),
+                    fillColor: cardBg,
                   ),
                 ),
                 isActive: _currentStep >= 5,
@@ -304,15 +310,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00C853).withOpacity(0.15),
+                        color: primaryColor.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF00C853).withOpacity(0.3)),
+                        border: Border.all(color: primaryColor.withOpacity(0.3)),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.check_circle, color: Color(0xFF00C853)),
-                          SizedBox(width: 8),
-                          Expanded(
+                          Icon(Icons.check_circle, color: primaryColor),
+                          const SizedBox(width: 8),
+                          const Expanded(
                             child: Text(
                               'Нажми "Готово", чтобы сохранить профиль',
                               style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
@@ -323,9 +329,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     const SizedBox(height: 16),
                     if (_isSaving)
-                      const Center(
+                      Center(
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                          valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                         ),
                       )
                     else
@@ -334,8 +340,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         icon: const Icon(Icons.save),
                         label: const Text('Сохраняю'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFD600),
-                          foregroundColor: const Color(0xFF1A1A1A),
+                          backgroundColor: secondaryColor,
+                          foregroundColor: theme.colorScheme.onSecondary,
                           minimumSize: const Size(double.infinity, 50),
                         ),
                       ),

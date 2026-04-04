@@ -5,6 +5,9 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -22,9 +25,9 @@ class DashboardScreen extends StatelessWidget {
                         fontFamily: 'Courier',
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF00C853),
+                        color: primaryColor,
                         letterSpacing: 8,
-                        shadows: [Shadow(color: Color(0xFF00C853).withOpacity(0.3), blurRadius: 20)],
+                        shadows: [Shadow(color: primaryColor.withOpacity(0.3), blurRadius: 20)],
                       ),
                     ),
                     Text('CAREER AI',
@@ -84,15 +87,19 @@ class _DashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final cardBg = theme.cardColor;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF252525),
-          border: Border(left: BorderSide(color: Color(0xFF00C853), width: 3)),
+          color: cardBg,
+          border: Border(left: BorderSide(color: primaryColor, width: 3)),
           borderRadius: BorderRadius.circular(4),
-          boxShadow: [BoxShadow(color: Color(0xFF00C853).withOpacity(0.1), blurRadius: 15)],
+          boxShadow: [BoxShadow(color: primaryColor.withOpacity(0.1), blurRadius: 15)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,17 +108,17 @@ class _DashCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(children: [
-                  Icon(icon, color: Color(0xFF00C853), size: 20),
+                  Icon(icon, color: primaryColor, size: 20),
                   const SizedBox(width: 8),
-                  Text(title, style: TextStyle(fontFamily: 'Courier', fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                  Text(title, style: const TextStyle(fontFamily: 'Courier', fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
                 ]),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xFF00C853)),
+                    border: Border.all(color: primaryColor),
                     borderRadius: BorderRadius.circular(2),
                   ),
-                  child: Text(badge, style: TextStyle(fontFamily: 'Courier', fontSize: 9, color: Color(0xFF00C853), letterSpacing: 1)),
+                  child: Text(badge, style: TextStyle(fontFamily: 'Courier', fontSize: 9, color: primaryColor, letterSpacing: 1)),
                 ),
               ],
             ),

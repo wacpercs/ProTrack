@@ -1,4 +1,4 @@
-// lib/screens/career_tab_screen.dart (Breaking Bad theme)
+// lib/screens/career_tab_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
@@ -39,19 +39,25 @@ class _CareerTabScreenState extends State<CareerTabScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final secondaryColor = theme.colorScheme.secondary;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
+    final cardBg = theme.cardColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
         title: const Text(
           'Карьера',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF252525),
+        backgroundColor: cardBg,
         foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF00C853),
-          labelColor: const Color(0xFF00C853),
+          indicatorColor: primaryColor,
+          labelColor: primaryColor,
           unselectedLabelColor: Colors.grey[500],
           tabs: const [
             Tab(text: 'Профессии'),
@@ -62,14 +68,14 @@ class _CareerTabScreenState extends State<CareerTabScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildProfessionsTab(),
-          _buildCareerPlanTab(),
+          _buildProfessionsTab(primaryColor, scaffoldBg, cardBg),
+          _buildCareerPlanTab(secondaryColor, scaffoldBg, cardBg, primaryColor),
         ],
       ),
     );
   }
 
-  Widget _buildProfessionsTab() {
+  Widget _buildProfessionsTab(Color primaryColor, Color scaffoldBg, Color cardBg) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -79,8 +85,8 @@ class _CareerTabScreenState extends State<CareerTabScreen>
             icon: const Icon(Icons.auto_awesome),
             label: const Text('Подобрать профессии'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00C853),
-              foregroundColor: const Color(0xFF1A1A1A),
+              backgroundColor: primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               minimumSize: const Size(double.infinity, 48),
             ),
           ),
@@ -93,15 +99,15 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           const SizedBox(height: 24),
           Expanded(
             child: _isLoadingProfessions
-                ? _buildLoadingAnimation('Анализирую профиль...')
-                : _buildResultCard(_professions),
+                ? _buildLoadingAnimation('Анализирую профиль...', primaryColor)
+                : _buildResultCard(_professions, cardBg),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCareerPlanTab() {
+  Widget _buildCareerPlanTab(Color secondaryColor, Color scaffoldBg, Color cardBg, Color primaryColor) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -111,8 +117,8 @@ class _CareerTabScreenState extends State<CareerTabScreen>
             icon: const Icon(Icons.timeline),
             label: const Text('Карьерный план'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFD600),
-              foregroundColor: const Color(0xFF1A1A1A),
+              backgroundColor: secondaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
               minimumSize: const Size(double.infinity, 48),
             ),
           ),
@@ -125,25 +131,25 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           const SizedBox(height: 24),
           Expanded(
             child: _isLoadingPlan
-                ? _buildLoadingAnimation('Составляю план...')
-                : _buildResultCard(_careerPlan),
+                ? _buildLoadingAnimation('Составляю план...', primaryColor)
+                : _buildResultCard(_careerPlan, cardBg),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingAnimation(String text) {
+  Widget _buildLoadingAnimation(String text, Color primaryColor) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 60,
             height: 60,
             child: CircularProgressIndicator(
               strokeWidth: 3,
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+              valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
             ),
           ),
           const SizedBox(height: 16),
@@ -152,13 +158,13 @@ class _CareerTabScreenState extends State<CareerTabScreen>
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
           ),
           const SizedBox(height: 8),
-          _buildDotsAnimation(),
+          _buildDotsAnimation(primaryColor),
         ],
       ),
     );
   }
 
-  Widget _buildDotsAnimation() {
+  Widget _buildDotsAnimation(Color primaryColor) {
     return StatefulBuilder(
       builder: (context, setState) {
         return Row(
@@ -168,8 +174,8 @@ class _CareerTabScreenState extends State<CareerTabScreen>
               margin: const EdgeInsets.symmetric(horizontal: 2),
               width: 6,
               height: 6,
-              decoration: const BoxDecoration(
-                color: Color(0xFF00C853),
+              decoration: BoxDecoration(
+                color: primaryColor,
                 shape: BoxShape.circle,
               ),
             );
@@ -179,11 +185,11 @@ class _CareerTabScreenState extends State<CareerTabScreen>
     );
   }
 
-  Widget _buildResultCard(String content) {
+  Widget _buildResultCard(String content, Color cardBg) {
     if (content.isEmpty) {
       return Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF252525),
+          color: cardBg,
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Center(
@@ -197,7 +203,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF252525),
+        color: cardBg,
         borderRadius: BorderRadius.circular(16),
       ),
       child: SingleChildScrollView(

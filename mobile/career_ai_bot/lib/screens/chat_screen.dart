@@ -1,4 +1,4 @@
-// lib/screens/chat_screen.dart (Breaking Bad theme)
+// lib/screens/chat_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../widgets/typing_indicator.dart';
@@ -52,16 +52,21 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
+    final cardBg = theme.cardColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
         title: const Text(
           'Чат с консультантом',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF252525),
-        foregroundColor: const Color(0xFF00C853),
+        backgroundColor: cardBg,
+        foregroundColor: primaryColor,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(30),
           child: Padding(
@@ -92,16 +97,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: isUser ? const Color(0xFF00C853) : const Color(0xFF252525),
+                      color: isUser ? primaryColor : cardBg,
                       borderRadius: BorderRadius.circular(18),
                       border: isUser
                           ? null
-                          : Border.all(color: const Color(0xFF00C853).withOpacity(0.4), width: 1),
+                          : Border.all(color: primaryColor.withOpacity(0.4), width: 1),
                     ),
                     child: Text(
                       msg['text'],
                       style: TextStyle(
-                        color: isUser ? const Color(0xFF1A1A1A) : Colors.white,
+                        color: isUser ? theme.colorScheme.onPrimary : Colors.white,
                       ),
                     ),
                   ),
@@ -115,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TypingIndicator(),
             ),
           Container(
-            color: const Color(0xFF252525),
+            color: cardBg,
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
@@ -136,10 +141,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+                        borderSide: BorderSide(color: primaryColor, width: 2),
                       ),
                       filled: true,
-                      fillColor: const Color(0xFF1A1A1A),
+                      fillColor: scaffoldBg,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                     onSubmitted: (_) => _sendMessage(),
@@ -147,9 +152,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 const SizedBox(width: 8),
                 CircleAvatar(
-                  backgroundColor: const Color(0xFF00C853),
+                  backgroundColor: primaryColor,
                   child: IconButton(
-                    icon: const Icon(Icons.send, color: Color(0xFF1A1A1A), size: 20),
+                    icon: Icon(Icons.send, color: theme.colorScheme.onPrimary, size: 20),
                     onPressed: _sendMessage,
                   ),
                 ),

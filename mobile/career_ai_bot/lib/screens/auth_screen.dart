@@ -79,15 +79,20 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
+    final cardBg = theme.cardColor;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF0A1A0A),
-              Color(0xFF1A1A1A),
+              scaffoldBg.withOpacity(0.8),
+              scaffoldBg,
             ],
           ),
         ),
@@ -107,11 +112,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   width: 120,
   height: 120,
   decoration: BoxDecoration(
-    color: const Color(0xFF252525),
+    color: cardBg,
     borderRadius: BorderRadius.circular(40),
     boxShadow: [
       BoxShadow(
-        color: const Color(0xFF00C853).withOpacity(0.3),
+        color: primaryColor.withOpacity(0.3),
         blurRadius: 20,
         offset: const Offset(0, 10),
       ),
@@ -120,7 +125,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   child: PhosphorIcon(
     PhosphorIcons.headCircuit(PhosphorIconsStyle.regular),
     size: 60,
-    color: const Color(0xFF00C853),
+    color: primaryColor,
   ),
 ),
                       const SizedBox(height: 32),
@@ -130,10 +135,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Courier',
-                          color: const Color(0xFF00C853),
+                          color: primaryColor,
                           shadows: [
                             Shadow(
-                              color: const Color(0xFF00C853).withOpacity(0.6),
+                              color: primaryColor.withOpacity(0.6),
                               blurRadius: 20,
                               offset: const Offset(0, 2),
                             ),
@@ -152,7 +157,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                       const SizedBox(height: 48),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF252525),
+                          color: cardBg,
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
@@ -206,10 +211,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
-                                        borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+                                        borderSide: BorderSide(color: primaryColor, width: 2),
                                       ),
                                       filled: true,
-                                      fillColor: const Color(0xFF1A1A1A),
+                                      fillColor: scaffoldBg,
                                     ),
                                     validator: (v) {
                                       if (v == null || v.isEmpty) return 'Введите логин';
@@ -247,10 +252,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(15),
-                                        borderSide: const BorderSide(color: Color(0xFF00C853), width: 2),
+                                        borderSide: BorderSide(color: primaryColor, width: 2),
                                       ),
                                       filled: true,
-                                      fillColor: const Color(0xFF1A1A1A),
+                                      fillColor: scaffoldBg,
                                     ),
                                     obscureText: _obscurePassword,
                                     validator: (v) {
@@ -261,17 +266,17 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                                   ),
                                   const SizedBox(height: 32),
                                   if (_isLoading)
-                                    const Center(
+                                    Center(
                                       child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                                       ),
                                     )
                                   else
                                     ElevatedButton(
                                       onPressed: _submit,
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF00C853),
-                                        foregroundColor: const Color(0xFF1A1A1A),
+                                        backgroundColor: primaryColor,
+                                        foregroundColor: theme.colorScheme.onPrimary,
                                         minimumSize: const Size(double.infinity, 55),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(15),
@@ -298,9 +303,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                                       _isLogin
                                           ? 'Нет аккаунта? Зарегистрироваться'
                                           : 'Уже есть аккаунт? Войти',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
-                                        color: Color(0xFF00C853),
+                                        color: primaryColor,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

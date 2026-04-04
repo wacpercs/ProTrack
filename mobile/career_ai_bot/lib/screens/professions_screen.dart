@@ -28,20 +28,22 @@ class _ProfessionsScreenState extends State<ProfessionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Подбор профессий',
           style: TextStyle(fontFamily: 'Courier', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF252525),
+        backgroundColor: theme.cardColor,
         foregroundColor: Colors.white,
       ),
       body: _isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
               ),
             )
           : SingleChildScrollView(
