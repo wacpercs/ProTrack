@@ -19,10 +19,30 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setThemeState] = useState(localStorage.getItem("app_theme") || "breaking");
+
+  // Apply theme class to body
+  useEffect(() => {
+    document.body.classList.toggle("theme-emo", theme === "emo");
+    localStorage.setItem("app_theme", theme);
+  }, [theme]);
+
+  function toggleTheme() {
+    const next = theme === "breaking" ? "emo" : "breaking";
+    setThemeState(next);
+    api.setTheme(next).catch(() => {});
+  }
 
   useEffect(() => {
     try { initTelegram(); } catch(e) {}
     loadProfile();
+    // Load saved theme from server
+    api.getTheme().then(d => {
+      if (d.theme) {
+        setThemeState(d.theme);
+        localStorage.setItem("app_theme", d.theme);
+      }
+    }).catch(() => {});
   }, []);
 
   async function loadProfile() {
@@ -70,6 +90,7 @@ export default function App() {
         <NavItem icon="🔍" label="Вакансии" active={page === "vacancies"} onClick={() => setPage("vacancies")} />
         <NavItem icon="⚗️" label="Анализ" active={page === "career"} onClick={() => setPage("career")} />
         <NavItem icon="👤" label="Профиль" active={page === "editProfile"} onClick={() => setPage("editProfile")} />
+        <NavItem icon={theme === "emo" ? "💚" : "🖤"} label="Тема" onClick={toggleTheme} />
       </nav>
     </div>
   );

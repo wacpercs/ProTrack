@@ -65,4 +65,6 @@ export const api = {
       body: JSON.stringify({ query, experience, page }),
     }),
   getVacancySuggestions: () => request("/vacancy-suggestions"),
+  getTheme: () => request("/theme"),
+  setTheme: (theme) => request("/theme", { method: "POST", body: JSON.stringify({ theme }) }),
 };

@@ -23,6 +23,21 @@
   --transition: 0.2s ease;
 }
 
+/* ─── Emo Theme Override ─── */
+body.theme-emo {
+  --bg: #0d0d0d;
+  --card: rgba(26, 16, 24, 0.75);
+  --primary: #ff2d6f;
+  --primary-dark: #cc1050;
+  --primary-glow: rgba(255, 45, 111, 0.25);
+  --amber: #ff69b4;
+  --text: #c9c9c9;
+  --text-secondary: #666666;
+  --border: #2a1e28;
+  --border-glow: rgba(255, 45, 111, 0.15);
+  --accent-glow: 0 0 15px rgba(255, 45, 111, 0.15);
+}
+
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -31,6 +46,11 @@ body {
   -webkit-font-smoothing: antialiased;
   background-image:
     repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,200,83,0.02) 40px, rgba(0,200,83,0.02) 41px);
+}
+
+body.theme-emo {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,45,111,0.02) 40px, rgba(255,45,111,0.02) 41px);
 }
 
 /* Scanline overlay */
@@ -67,7 +87,7 @@ body::before {
 
 .card:hover {
   border-color: var(--border-glow);
-  box-shadow: 0 0 20px rgba(0, 200, 83, 0.2);
+  box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .card-header {
@@ -112,8 +132,8 @@ body::before {
 }
 
 .btn-primary:hover {
-  background: #00e676;
-  box-shadow: 0 0 30px rgba(0, 200, 83, 0.5);
+  filter: brightness(1.15);
+  box-shadow: 0 0 30px var(--primary-glow);
 }
 
 .btn-primary:active {
@@ -133,7 +153,7 @@ body::before {
 }
 
 .btn-outline:hover {
-  background: rgba(0, 200, 83, 0.1);
+  background: var(--primary-glow);
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -323,7 +343,7 @@ body::before {
 .vacancy-tag {
   font-size: 11px;
   padding: 3px 8px;
-  background: rgba(0, 200, 83, 0.08);
+  background: var(--primary-glow);
   border: 1px solid var(--border);
   border-radius: 2px;
   color: var(--text-secondary);
@@ -432,7 +452,7 @@ body::before {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-::selection { background: rgba(0, 200, 83, 0.3); color: #fff; }
+::selection { background: var(--primary-glow); color: #fff; }
 
 /* ─── App Logo ─── */
 .app-logo {
