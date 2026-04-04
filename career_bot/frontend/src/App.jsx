@@ -84,13 +84,14 @@ export default function App() {
         setPage={setPage}
         onComplete={page === "editProfile" ? (p) => { setProfile(p); setPage("dashboard"); } : undefined}
         editMode={page === "editProfile"}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
       <nav className="nav-bottom">
         <NavItem icon="🏠" label="Главная" active={page === "dashboard"} onClick={() => setPage("dashboard")} />
         <NavItem icon="🔍" label="Вакансии" active={page === "vacancies"} onClick={() => setPage("vacancies")} />
         <NavItem icon="⚗️" label="Анализ" active={page === "career"} onClick={() => setPage("career")} />
         <NavItem icon="👤" label="Профиль" active={page === "editProfile"} onClick={() => setPage("editProfile")} />
-        <NavItem icon={theme === "emo" ? "💚" : "🖤"} label="Тема" onClick={toggleTheme} />
       </nav>
     </div>
   );

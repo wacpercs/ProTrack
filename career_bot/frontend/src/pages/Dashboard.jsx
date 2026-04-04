@@ -1,7 +1,7 @@
 import React from "react";
 import { haptic } from "../telegram";
 
-export default function Dashboard({ profile, setPage }) {
+export default function Dashboard({ profile, setPage, theme, toggleTheme }) {
   const name = profile?.name || "субъект";
 
   return (
@@ -46,9 +46,16 @@ export default function Dashboard({ profile, setPage }) {
           <ProfileRow label="Образование" value={profile.education} />
           <ProfileRow label="Интересы" value={profile.interests} />
           <ProfileRow label="Навыки" value={profile.skills} />
-          <button className="btn btn-outline" style={{ marginTop: 12 }} onClick={() => { haptic(); setPage("editProfile"); }}>
-            Редактировать
-          </button>
+          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => { haptic(); setPage("editProfile"); }}>
+              Редактировать
+            </button>
+            {toggleTheme && (
+              <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => { haptic(); toggleTheme(); }}>
+                {theme === "emo" ? "💚 Breaking Bad" : "🖤 Emo"}
+              </button>
+            )}
+          </div>
         </div>
       )}
     </>

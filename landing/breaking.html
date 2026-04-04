@@ -181,14 +181,16 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             text-decoration: none;
-            color: var(--charcoal);
-            background: var(--toxic);
-            box-shadow: 0 0 12px var(--toxic-glow);
+            color: #e0e0e0;
+            background: var(--toxic-dark);
+            border: 1px solid var(--toxic);
+            box-shadow: 0 0 8px rgba(0,200,83,0.15);
             transition: all 0.3s;
         }
         .sticky-header-cta:hover {
-            background: #00e676;
-            box-shadow: 0 0 24px var(--toxic-glow);
+            background: var(--toxic);
+            color: var(--charcoal);
+            box-shadow: 0 0 20px var(--toxic-glow);
         }
 
         @media (max-width: 768px) {
