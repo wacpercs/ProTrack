@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProTrack AI — Выбери свой путь</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: #000;
             color: #0f0;
-            font-family: 'Courier New', monospace;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -26,6 +27,30 @@
             z-index: 0;
         }
 
+        /* === SCANLINE OVERLAY === */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.08) 2px,
+                rgba(0, 0, 0, 0.08) 4px
+            );
+        }
+
+        /* === VIGNETTE === */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+        }
+
         /* === MAIN CONTENT === */
         .choice-container {
             position: relative;
@@ -37,68 +62,94 @@
         }
 
         .morpheus-text {
-            font-size: clamp(14px, 2.5vw, 20px);
-            color: #8a8a8a;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
+            font-size: clamp(12px, 2vw, 16px);
+            color: #4a4a4a;
+            margin-bottom: 16px;
+            letter-spacing: 6px;
             text-transform: uppercase;
             opacity: 0;
             animation: typeIn 0.8s ease 0.5s forwards;
         }
 
         .title {
-            font-size: clamp(32px, 7vw, 64px);
+            font-size: clamp(28px, 7vw, 56px);
             font-weight: bold;
             color: #fff;
             margin-bottom: 8px;
-            text-shadow: 0 0 30px rgba(255,255,255,0.15);
+            text-shadow: 0 0 40px rgba(255,255,255,0.1), 0 0 80px rgba(0,255,65,0.05);
             opacity: 0;
             animation: typeIn 0.8s ease 0.8s forwards;
         }
 
         .subtitle {
-            font-size: clamp(12px, 2vw, 16px);
-            color: #555;
-            margin-bottom: 50px;
-            letter-spacing: 3px;
+            font-size: clamp(10px, 1.8vw, 14px);
+            color: #2a2a2a;
+            margin-bottom: 60px;
+            letter-spacing: 5px;
             text-transform: uppercase;
             opacity: 0;
             animation: typeIn 0.8s ease 1.1s forwards;
         }
 
+        .pills-wrapper {
+            opacity: 0;
+            animation: pillsAppear 1.2s ease 1.6s forwards;
+        }
+
         .pills {
             display: flex;
-            gap: clamp(30px, 6vw, 80px);
+            gap: clamp(40px, 8vw, 100px);
             justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* === MORPHEUS HANDS === */
+        .hand {
+            position: relative;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            opacity: 0;
-            animation: pillsAppear 1s ease 1.6s forwards;
+        }
+
+        .hand-palm {
+            width: clamp(120px, 22vw, 180px);
+            height: clamp(60px, 11vw, 90px);
+            background: radial-gradient(ellipse at 50% 60%, #1a1a1a 0%, #0a0a0a 60%, #000 100%);
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
 
         /* === PILL === */
         .pill {
             position: relative;
             cursor: pointer;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s;
             -webkit-tap-highlight-color: transparent;
+            z-index: 2;
         }
         .pill:hover {
-            transform: scale(1.12);
+            transform: scale(1.15) translateY(-4px);
+            filter: brightness(1.1);
         }
         .pill:active {
             transform: scale(0.95);
         }
 
         .pill-shape {
-            width: clamp(80px, 16vw, 140px);
-            height: clamp(40px, 8vw, 65px);
+            width: clamp(90px, 18vw, 150px);
+            height: clamp(42px, 8.5vw, 68px);
             border-radius: 100px;
             position: relative;
             overflow: hidden;
             box-shadow:
-                0 4px 20px rgba(0,0,0,0.5),
-                inset 0 -3px 8px rgba(0,0,0,0.3),
-                inset 0 3px 8px rgba(255,255,255,0.1);
+                0 6px 30px rgba(0,0,0,0.6),
+                inset 0 -4px 10px rgba(0,0,0,0.4),
+                inset 0 4px 10px rgba(255,255,255,0.08);
             transition: box-shadow 0.4s;
         }
 
@@ -110,6 +161,7 @@
             top: 0;
             width: 50%;
             height: 100%;
+            transition: filter 0.4s;
         }
         .pill-shape::before { left: 0; }
         .pill-shape::after { right: 0; }
@@ -117,91 +169,141 @@
         /* Capsule seam */
         .pill-seam {
             position: absolute;
-            top: 5%; bottom: 5%;
+            top: 3%; bottom: 3%;
             left: 50%;
             width: 2px;
             transform: translateX(-50%);
             z-index: 2;
         }
 
-        /* Shine */
+        /* Primary shine */
         .pill-shine {
             position: absolute;
-            top: 8px;
-            left: 15%;
-            width: 55%;
-            height: 30%;
+            top: 6px;
+            left: 12%;
+            width: 60%;
+            height: 35%;
             border-radius: 50%;
             z-index: 3;
             pointer-events: none;
         }
 
-        /* RED pill */
+        /* Secondary highlight */
+        .pill-highlight {
+            position: absolute;
+            bottom: 8px;
+            right: 15%;
+            width: 30%;
+            height: 15%;
+            border-radius: 50%;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* === RED PILL === */
         .pill-red .pill-shape::before {
-            background: linear-gradient(180deg, #ff4060 0%, #cc1035 50%, #8a0020 100%);
+            background: linear-gradient(170deg, #ff5070 0%, #d41040 35%, #8a0020 70%, #600018 100%);
         }
         .pill-red .pill-shape::after {
-            background: linear-gradient(180deg, #e03050 0%, #a00825 50%, #700018 100%);
+            background: linear-gradient(170deg, #e84060 0%, #b00830 35%, #700018 70%, #500010 100%);
         }
-        .pill-red .pill-seam { background: rgba(80, 0, 10, 0.6); }
-        .pill-red .pill-shine { background: radial-gradient(ellipse, rgba(255,200,200,0.5) 0%, transparent 70%); }
+        .pill-red .pill-seam {
+            background: linear-gradient(180deg, rgba(120,0,20,0.3) 0%, rgba(60,0,10,0.8) 50%, rgba(120,0,20,0.3) 100%);
+        }
+        .pill-red .pill-shine {
+            background: radial-gradient(ellipse, rgba(255,180,190,0.6) 0%, rgba(255,120,140,0.2) 40%, transparent 70%);
+        }
+        .pill-red .pill-highlight {
+            background: radial-gradient(ellipse, rgba(255,100,120,0.4) 0%, transparent 70%);
+        }
         .pill-red:hover .pill-shape {
             box-shadow:
-                0 4px 20px rgba(0,0,0,0.5),
-                0 0 40px rgba(255, 45, 111, 0.5),
-                0 0 80px rgba(255, 45, 111, 0.2),
-                inset 0 -3px 8px rgba(0,0,0,0.3),
-                inset 0 3px 8px rgba(255,255,255,0.1);
+                0 6px 30px rgba(0,0,0,0.6),
+                0 0 50px rgba(255, 45, 111, 0.6),
+                0 0 100px rgba(255, 45, 111, 0.25),
+                0 0 150px rgba(255, 45, 111, 0.1),
+                inset 0 -4px 10px rgba(0,0,0,0.4),
+                inset 0 4px 10px rgba(255,255,255,0.08);
         }
 
-        /* GREEN pill */
+        /* === GREEN PILL === */
         .pill-green .pill-shape::before {
-            background: linear-gradient(180deg, #00e85a 0%, #00a83a 50%, #006820 100%);
+            background: linear-gradient(170deg, #10f06a 0%, #00b848 35%, #007828 70%, #005018 100%);
         }
         .pill-green .pill-shape::after {
-            background: linear-gradient(180deg, #00d050 0%, #009030 50%, #005818 100%);
+            background: linear-gradient(170deg, #08e060 0%, #00a040 35%, #006820 70%, #004810 100%);
         }
-        .pill-green .pill-seam { background: rgba(0, 50, 10, 0.6); }
-        .pill-green .pill-shine { background: radial-gradient(ellipse, rgba(200,255,200,0.5) 0%, transparent 70%); }
+        .pill-green .pill-seam {
+            background: linear-gradient(180deg, rgba(0,80,20,0.3) 0%, rgba(0,40,10,0.8) 50%, rgba(0,80,20,0.3) 100%);
+        }
+        .pill-green .pill-shine {
+            background: radial-gradient(ellipse, rgba(180,255,200,0.6) 0%, rgba(120,255,140,0.2) 40%, transparent 70%);
+        }
+        .pill-green .pill-highlight {
+            background: radial-gradient(ellipse, rgba(100,255,120,0.4) 0%, transparent 70%);
+        }
         .pill-green:hover .pill-shape {
             box-shadow:
-                0 4px 20px rgba(0,0,0,0.5),
-                0 0 40px rgba(0, 200, 83, 0.5),
-                0 0 80px rgba(0, 200, 83, 0.2),
-                inset 0 -3px 8px rgba(0,0,0,0.3),
-                inset 0 3px 8px rgba(255,255,255,0.1);
+                0 6px 30px rgba(0,0,0,0.6),
+                0 0 50px rgba(0, 200, 83, 0.6),
+                0 0 100px rgba(0, 200, 83, 0.25),
+                0 0 150px rgba(0, 200, 83, 0.1),
+                inset 0 -4px 10px rgba(0,0,0,0.4),
+                inset 0 4px 10px rgba(255,255,255,0.08);
         }
 
+        /* === PILL GLOW RING (under pill) === */
+        .pill-glow {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 20px;
+            border-radius: 50%;
+            filter: blur(12px);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 0;
+        }
+        .pill-red .pill-glow { background: rgba(255, 45, 111, 0.5); }
+        .pill-green .pill-glow { background: rgba(0, 200, 83, 0.5); }
+        .pill:hover .pill-glow { opacity: 1; }
+
+        /* === LABELS === */
         .pill-label {
-            margin-top: 20px;
+            margin-top: 24px;
             font-size: clamp(11px, 1.8vw, 14px);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            transition: color 0.3s, text-shadow 0.3s;
+            transition: all 0.4s;
         }
-        .pill-red .pill-label {
-            color: #663040;
+        .pill-sublabel {
+            font-size: clamp(8px, 1.2vw, 10px);
+            margin-top: 6px;
+            letter-spacing: 2px;
+            transition: all 0.4s;
         }
-        .pill-red:hover .pill-label {
-            color: #ff2d6f;
-            text-shadow: 0 0 12px rgba(255, 45, 111, 0.5);
-        }
-        .pill-green .pill-label {
-            color: #306640;
-        }
-        .pill-green:hover .pill-label {
-            color: #00c853;
-            text-shadow: 0 0 12px rgba(0, 200, 83, 0.5);
-        }
+        .pill-red .pill-label { color: #4a2030; }
+        .pill-red .pill-sublabel { color: #3a1525; }
+        .pill-red:hover .pill-label { color: #ff2d6f; text-shadow: 0 0 20px rgba(255, 45, 111, 0.6); }
+        .pill-red:hover .pill-sublabel { color: #cc2060; }
+
+        .pill-green .pill-label { color: #204a30; }
+        .pill-green .pill-sublabel { color: #153a20; }
+        .pill-green:hover .pill-label { color: #00c853; text-shadow: 0 0 20px rgba(0, 200, 83, 0.6); }
+        .pill-green:hover .pill-sublabel { color: #00a040; }
 
         /* === OR DIVIDER === */
         .or-divider {
-            color: #333;
+            color: #1a1a1a;
             font-size: clamp(10px, 1.5vw, 13px);
             letter-spacing: 4px;
             align-self: center;
             text-transform: uppercase;
             user-select: none;
+            padding-top: 20px;
         }
 
         /* === TRANSITION OVERLAY === */
@@ -211,22 +313,41 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.8s ease;
         }
         .transition-overlay.active {
             opacity: 1;
             pointer-events: all;
         }
-        .transition-overlay.red { background: radial-gradient(ellipse at center, #1a0008, #000); }
-        .transition-overlay.green { background: radial-gradient(ellipse at center, #001a08, #000); }
+        .transition-overlay.red {
+            background: radial-gradient(ellipse at center, rgba(255,45,111,0.15) 0%, #000 70%);
+        }
+        .transition-overlay.green {
+            background: radial-gradient(ellipse at center, rgba(0,200,83,0.15) 0%, #000 70%);
+        }
 
-        /* === FLOATING PILL REFLECTIONS === */
+        /* === PARTICLE BURST on click === */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: particleBurst 0.8s ease-out forwards;
+        }
+
+        /* === FLOATING ANIMATION === */
         .pill-float {
-            animation: pillFloat 3s ease-in-out infinite;
+            animation: pillFloat 4s ease-in-out infinite;
         }
         .pill-float-delay {
-            animation: pillFloat 3s ease-in-out 0.3s infinite;
+            animation: pillFloat 4s ease-in-out 0.5s infinite;
         }
+
+        /* === PULSE GLOW (idle) === */
+        .pill-red .pill-shape { animation: pulseRed 3s ease-in-out infinite; }
+        .pill-green .pill-shape { animation: pulseGreen 3s ease-in-out 1.5s infinite; }
 
         /* === ANIMATIONS === */
         @keyframes fadeInUp {
@@ -238,45 +359,68 @@
             to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pillsAppear {
-            from { opacity: 0; transform: scale(0.8); }
+            from { opacity: 0; transform: scale(0.7); }
             to { opacity: 1; transform: scale(1); }
         }
         @keyframes pillFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(0.5deg); }
+            75% { transform: translateY(3px) rotate(-0.5deg); }
+        }
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 6px 30px rgba(0,0,0,0.6), inset 0 -4px 10px rgba(0,0,0,0.4), inset 0 4px 10px rgba(255,255,255,0.08); }
+            50% { box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 30px rgba(255,45,111,0.2), inset 0 -4px 10px rgba(0,0,0,0.4), inset 0 4px 10px rgba(255,255,255,0.08); }
+        }
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 6px 30px rgba(0,0,0,0.6), inset 0 -4px 10px rgba(0,0,0,0.4), inset 0 4px 10px rgba(255,255,255,0.08); }
+            50% { box-shadow: 0 6px 30px rgba(0,0,0,0.6), 0 0 30px rgba(0,200,83,0.2), inset 0 -4px 10px rgba(0,0,0,0.4), inset 0 4px 10px rgba(255,255,255,0.08); }
+        }
+        @keyframes particleBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
         /* === MOBILE === */
         @media (max-width: 480px) {
-            .pills { gap: 24px; }
+            .pills { gap: 30px; }
         }
     </style>
 </head>
 <body>
     <canvas id="matrixRain"></canvas>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
 
     <div class="choice-container">
         <div class="morpheus-text">ProTrack AI</div>
         <div class="title">Выбери свой путь</div>
         <div class="subtitle">Обратной дороги нет</div>
 
-        <div class="pills">
-            <div class="pill pill-red pill-float" onclick="choosePill('red')">
-                <div class="pill-shape">
-                    <div class="pill-seam"></div>
-                    <div class="pill-shine"></div>
+        <div class="pills-wrapper">
+            <div class="pills">
+                <div class="pill pill-red pill-float" onclick="choosePill('red', event)">
+                    <div class="pill-shape">
+                        <div class="pill-seam"></div>
+                        <div class="pill-shine"></div>
+                        <div class="pill-highlight"></div>
+                    </div>
+                    <div class="pill-glow"></div>
+                    <div class="pill-label">Emo</div>
+                    <div class="pill-sublabel">боль и слёзы</div>
                 </div>
-                <div class="pill-label">Emo</div>
-            </div>
 
-            <div class="or-divider">или</div>
+                <div class="or-divider">или</div>
 
-            <div class="pill pill-green pill-float-delay" onclick="choosePill('green')">
-                <div class="pill-shape">
-                    <div class="pill-seam"></div>
-                    <div class="pill-shine"></div>
+                <div class="pill pill-green pill-float-delay" onclick="choosePill('green', event)">
+                    <div class="pill-shape">
+                        <div class="pill-seam"></div>
+                        <div class="pill-shine"></div>
+                        <div class="pill-highlight"></div>
+                    </div>
+                    <div class="pill-glow"></div>
+                    <div class="pill-label">Breaking Bad</div>
+                    <div class="pill-sublabel">химия и опасность</div>
                 </div>
-                <div class="pill-label">Breaking Bad</div>
             </div>
         </div>
     </div>
@@ -284,44 +428,51 @@
     <div class="transition-overlay" id="transOverlay"></div>
 
     <script>
-    // === MATRIX RAIN ===
+    // === MATRIX RAIN (enhanced) ===
     (function() {
         const canvas = document.getElementById('matrixRain');
         const ctx = canvas.getContext('2d');
         let w, h, columns, drops;
 
-        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789PROTRACK';
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
 
         function resize() {
             w = canvas.width = window.innerWidth;
             h = canvas.height = window.innerHeight;
-            const fontSize = 14;
+            const fontSize = 15;
             columns = Math.floor(w / fontSize);
-            drops = new Array(columns).fill(1).map(() => Math.random() * -100);
+            drops = new Array(columns).fill(0).map(() => Math.random() * -80);
         }
 
         resize();
         window.addEventListener('resize', resize);
 
         function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = '#003800';
-            ctx.font = '14px monospace';
+            ctx.font = '15px monospace';
 
             for (let i = 0; i < drops.length; i++) {
                 const char = chars[Math.floor(Math.random() * chars.length)];
-                const x = i * 14;
-                const y = drops[i] * 14;
+                const x = i * 15;
+                const y = drops[i] * 15;
 
-                // Brighter at the head
-                if (Math.random() > 0.95) {
+                // Head of the stream is bright
+                const rand = Math.random();
+                if (rand > 0.97) {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowColor = '#00ff41';
+                    ctx.shadowBlur = 10;
+                } else if (rand > 0.92) {
                     ctx.fillStyle = '#00ff41';
+                    ctx.shadowBlur = 0;
                 } else {
-                    ctx.fillStyle = 'rgba(0, 56, 0, 0.8)';
+                    ctx.fillStyle = 'rgba(0, 60, 0, 0.7)';
+                    ctx.shadowBlur = 0;
                 }
 
                 ctx.fillText(char, x, y);
+                ctx.shadowBlur = 0;
 
                 if (y > h && Math.random() > 0.975) {
                     drops[i] = 0;
@@ -333,16 +484,44 @@
         draw();
     })();
 
+    // === PARTICLE BURST ===
+    function spawnParticles(x, y, color) {
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.style.background = color;
+            p.style.boxShadow = '0 0 6px ' + color;
+            const angle = (Math.PI * 2 / 20) * i + (Math.random() - 0.5);
+            const dist = 60 + Math.random() * 80;
+            p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            p.style.width = (2 + Math.random() * 4) + 'px';
+            p.style.height = p.style.width;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
+    }
+
     // === PILL CHOICE ===
-    function choosePill(color) {
+    function choosePill(color, event) {
         const overlay = document.getElementById('transOverlay');
-        overlay.className = 'transition-overlay ' + (color === 'red' ? 'red' : 'green') + ' active';
+        const isRed = color === 'red';
 
-        const target = color === 'red' ? 'emo.html' : 'breaking.html';
+        // Particle burst from click position
+        const rect = event.currentTarget.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        spawnParticles(cx, cy, isRed ? '#ff2d6f' : '#00c853');
 
+        // Transition
+        overlay.className = 'transition-overlay ' + (isRed ? 'red' : 'green') + ' active';
+
+        const target = isRed ? 'emo.html' : 'breaking.html';
         setTimeout(function() {
             window.location.href = target;
-        }, 700);
+        }, 900);
     }
     </script>
 </body>
