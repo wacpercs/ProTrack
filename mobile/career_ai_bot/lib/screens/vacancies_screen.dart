@@ -66,7 +66,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
 
     String defaultQuery = _suggestions.isNotEmpty ? _suggestions.first : 'flutter developer';
     try {
-      final items = await widget.apiService.getVacancies(defaultQuery, _experience, 0);
+      final items = await widget.apiService.getVacanciesScored(defaultQuery, _experience, 0);
       setState(() => _vacancies = items);
       if (items.isEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -74,11 +74,17 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
         );
       }
     } catch (e) {
-      print('Ошибка загрузки: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка загрузки: $e')),
-        );
+      print('Scored endpoint failed, falling back: $e');
+      try {
+        final items = await widget.apiService.getVacancies(defaultQuery, _experience, 0);
+        if (mounted) setState(() => _vacancies = items);
+      } catch (e2) {
+        print('Ошибка загрузки: $e2');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ошибка загрузки: $e2')),
+          );
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -100,7 +106,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
     });
 
     try {
-      final items = await widget.apiService.getVacancies(query, _experience, 0);
+      final items = await widget.apiService.getVacanciesScored(query, _experience, 0);
       setState(() => _vacancies = items);
       if (items.isEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -112,11 +118,28 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
         );
       }
     } catch (e) {
-      print('Ошибка поиска: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e')),
-        );
+      print('Scored endpoint failed, falling back: $e');
+      try {
+        final items = await widget.apiService.getVacancies(query, _experience, 0);
+        if (mounted) {
+          setState(() => _vacancies = items);
+          if (items.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Ничего не найдено. Попробуйте другой запрос или опыт')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Найдено ${items.length} вакансий')),
+            );
+          }
+        }
+      } catch (e2) {
+        print('Ошибка поиска: $e2');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ошибка: $e2')),
+          );
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -461,6 +484,40 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                                             ],
                                           ),
                                         ),
+                                        if (v['match_score'] != null && (v['match_score'] as num) > 0)
+                                          Container(
+                                            margin: const EdgeInsets.only(left: 8),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: ((v['match_score'] as num) >= 70
+                                                      ? theme.colorScheme.primary
+                                                      : (v['match_score'] as num) >= 40
+                                                          ? theme.colorScheme.secondary
+                                                          : Colors.red)
+                                                  .withOpacity(0.15),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: (v['match_score'] as num) >= 70
+                                                    ? theme.colorScheme.primary
+                                                    : (v['match_score'] as num) >= 40
+                                                        ? theme.colorScheme.secondary
+                                                        : Colors.red,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              '${v['match_score']}%',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: (v['match_score'] as num) >= 70
+                                                    ? theme.colorScheme.primary
+                                                    : (v['match_score'] as num) >= 40
+                                                        ? theme.colorScheme.secondary
+                                                        : Colors.red,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                     const SizedBox(height: 12),
@@ -508,6 +565,20 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
                                               style: TextStyle(fontSize: 12, color: Colors.grey[400]),
                                             ),
                                           ],
+                                        ),
+                                      ),
+                                    if (v['match_reason'] != null && v['match_reason'].toString().isNotEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: Text(
+                                          v['match_reason'],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.grey[400],
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                   ],

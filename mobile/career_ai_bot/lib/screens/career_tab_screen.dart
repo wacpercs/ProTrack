@@ -16,13 +16,15 @@ class _CareerTabScreenState extends State<CareerTabScreen>
   late TabController _tabController;
   String _professions = '';
   String _careerPlan = '';
+  String _skillGap = '';
   bool _isLoadingProfessions = false;
   bool _isLoadingPlan = false;
+  bool _isLoadingSkillGap = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   Future<void> _loadProfessions() async {
@@ -35,6 +37,12 @@ class _CareerTabScreenState extends State<CareerTabScreen>
     setState(() => _isLoadingPlan = true);
     _careerPlan = await widget.apiService.getCareerPlan();
     setState(() => _isLoadingPlan = false);
+  }
+
+  Future<void> _loadSkillGap() async {
+    setState(() => _isLoadingSkillGap = true);
+    _skillGap = await widget.apiService.getSkillGap();
+    setState(() => _isLoadingSkillGap = false);
   }
 
   @override
@@ -62,6 +70,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
           tabs: const [
             Tab(text: 'Профессии'),
             Tab(text: 'Карьерный план'),
+            Tab(text: 'Skill Gap'),
           ],
         ),
       ),
@@ -70,6 +79,7 @@ class _CareerTabScreenState extends State<CareerTabScreen>
         children: [
           _buildProfessionsTab(primaryColor, scaffoldBg, cardBg),
           _buildCareerPlanTab(secondaryColor, scaffoldBg, cardBg, primaryColor),
+          _buildSkillGapTab(primaryColor, scaffoldBg, cardBg),
         ],
       ),
     );
@@ -133,6 +143,38 @@ class _CareerTabScreenState extends State<CareerTabScreen>
             child: _isLoadingPlan
                 ? _buildLoadingAnimation('Составляю план...', primaryColor)
                 : _buildResultCard(_careerPlan, cardBg),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkillGapTab(Color primaryColor, Color scaffoldBg, Color cardBg) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _loadSkillGap,
+            icon: const Text('\u{1F4CA}', style: TextStyle(fontSize: 18)),
+            label: Text(_skillGap.isEmpty ? 'Анализ навыков' : 'Обновить анализ'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              minimumSize: const Size(double.infinity, 48),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'AI определит разрыв между текущими навыками и требованиями рынка',
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: _isLoadingSkillGap
+                ? _buildLoadingAnimation('Анализирую навыки...', primaryColor)
+                : _buildResultCard(_skillGap, cardBg),
           ),
         ],
       ),

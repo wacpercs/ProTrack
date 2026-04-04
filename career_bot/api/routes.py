@@ -240,6 +240,36 @@ async def get_career_plan(authorization: str = Header(None)):
     return {"result": plan}
 
 
+@router.get("/skill-gap")
+async def get_skill_gap(authorization: str = Header(None)):
+    uid = get_user_id(authorization)
+    user = await db_service.get_user(uid)
+    if not user:
+        raise HTTPException(400, "Profile not found")
+    result = await ai_service.skill_gap_analysis(user)
+    return {"result": result}
+
+
+@router.post("/vacancies/scored")
+async def search_vacancies_scored(data: VacancySearch, authorization: str = Header(None)):
+    """Search vacancies and score them for compatibility with user profile."""
+    uid = get_user_id(authorization)
+    user = await db_service.get_user(uid)
+    if not user:
+        raise HTTPException(400, "Profile not found")
+    results = await hh_service.search_vacancies(
+        text=data.query,
+        experience=data.experience,
+        per_page=10,
+        page=data.page,
+    )
+    items = results.get("items", [])
+    if items:
+        scored = await ai_service.score_vacancies(user, items)
+        results["items"] = scored
+    return results
+
+
 @router.post("/chat")
 async def chat_endpoint(data: ChatMessage, authorization: str = Header(None)):
     uid = get_user_id(authorization)

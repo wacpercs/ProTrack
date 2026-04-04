@@ -23,16 +23,26 @@ export default function Vacancies({ profile }) {
     setLoadingSuggestions(false);
   }
 
+  const [scored, setScored] = useState(false);
+
   async function search(q) {
     const searchQuery = q || query;
     if (!searchQuery.trim()) return;
     setLoading(true);
+    setScored(false);
     haptic();
     try {
-      const data = await api.searchVacancies(searchQuery);
+      const data = await api.searchVacanciesScored(searchQuery);
       setResults({ query: searchQuery, ...data });
+      setScored(true);
     } catch (e) {
-      alert("Ошибка: " + e.message);
+      // Fallback to regular search
+      try {
+        const data = await api.searchVacancies(searchQuery);
+        setResults({ query: searchQuery, ...data });
+      } catch (e2) {
+        alert("Ошибка: " + e2.message);
+      }
     }
     setLoading(false);
   }
@@ -109,8 +119,30 @@ export default function Vacancies({ profile }) {
           )}
           {results.items.map((v) => (
             <div className="vacancy-card" key={v.id}>
-              <div className="vacancy-title">{v.title}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div className="vacancy-title" style={{ flex: 1 }}>{v.title}</div>
+                {scored && v.match_score > 0 && (
+                  <span style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: 3,
+                    flexShrink: 0,
+                    marginLeft: 8,
+                    background: v.match_score >= 70 ? "rgba(0,200,83,0.15)" : v.match_score >= 40 ? "rgba(255,214,0,0.15)" : "rgba(255,60,0,0.15)",
+                    color: v.match_score >= 70 ? "var(--primary)" : v.match_score >= 40 ? "var(--amber)" : "#ff3d00",
+                    border: "1px solid " + (v.match_score >= 70 ? "var(--primary)" : v.match_score >= 40 ? "var(--amber)" : "#ff3d00"),
+                  }}>
+                    {v.match_score}%
+                  </span>
+                )}
+              </div>
               <div className="vacancy-company">{v.company}</div>
+              {scored && v.match_reason && (
+                <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4, fontStyle: "italic" }}>
+                  {v.match_reason}
+                </div>
+              )}
               <div className="vacancy-meta">
                 {v.city && <span className="vacancy-tag">📍 {v.city}</span>}
                 {v.salary !== "не указана" && <span className="vacancy-tag">💰 {v.salary}</span>}

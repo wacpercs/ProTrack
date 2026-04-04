@@ -116,28 +116,71 @@ def analyze_profile_messages(user: dict) -> list[dict]:
 
 def career_plan_messages(user: dict) -> list[dict]:
     profile = _build_profile_context(user)
-    prompt = f"""Задача: составить пошаговый карьерный план-таймлайн.
+    prompt = f"""Задача: составить пошаговый карьерный план с этапами роста и конкретными курсами.
 
 {profile}
 
-Формат — временная шкала с конкретными действиями:
+Формат ответа:
+
+1) ЦЕЛЕВАЯ ПРОФЕССИЯ: выбери одну наиболее подходящую
+
+2) ЭТАПЫ КАРЬЕРНОГО РОСТА:
+[эмодзи] Стажёр/Новичок -> чем занимается, зарплата
+[эмодзи] Junior -> чем занимается, зарплата
+[эмодзи] Middle -> чем занимается, зарплата
+[эмодзи] Senior/Lead -> чем занимается, зарплата
+
+3) ПЛАН ДЕЙСТВИЙ (таймлайн):
 
 Сейчас (неделя 1-2):
-- конкретное действие (ссылка на ресурс или название курса)
+- Конкретное действие
+- Курс: НАЗВАНИЕ (платформа: Stepik/Coursera/YouTube) — бесплатный
 
 Месяц 1-2:
-- конкретное действие
+- Конкретное действие
+- Курс: НАЗВАНИЕ (платформа)
 
 Месяц 3-6:
-- конкретное действие
+- Что изучать и делать
+- Проект для портфолио: описание
 
 Месяц 6-12:
-- конкретное действие
+- Стажировка/первая работа
+- Сертификация: НАЗВАНИЕ (если есть полезная)
 
 Год 1-3:
-- куда можно вырасти, какие позиции
+- Переход на следующий уровень
+- Что изучать для роста
 
-НЕ перечисляй профессии. НЕ пиши общих советов типа "изучай новое". Только конкретные шаги с названиями курсов, платформ, проектов. Выбери ОДНО наиболее подходящее направление и строй план под него."""
+ВАЖНО: указывай РЕАЛЬНЫЕ названия курсов на Stepik, Coursera, YouTube (бесплатные). НЕ выдумывай несуществующие курсы. Если не знаешь точное название — пиши "поищи на Stepik курс по [теме]"."""
+    return build_messages("", prompt)
+
+
+def skill_gap_messages(user: dict) -> list[dict]:
+    profile = _build_profile_context(user)
+    prompt = f"""Задача: провести анализ разрыва навыков (Skill Gap Analysis).
+
+{profile}
+
+Сделай следующее:
+
+1) На основе профиля определи 2-3 наиболее подходящие профессии
+
+2) Для КАЖДОЙ профессии составь таблицу навыков:
+
+[эмодзи] ПРОФЕССИЯ
+
+Навыки, которые УЖЕ ЕСТЬ (из профиля):
++ навык — как он поможет в этой профессии
+
+Навыки, которых НЕ ХВАТАЕТ:
+- навык — почему он нужен, где получить (конкретный курс/ресурс)
+
+Общий процент готовности: X%
+
+3) В конце напиши ИТОГ: какая профессия ближе всего к текущим навыкам и что нужно подтянуть в первую очередь (2-3 пункта).
+
+ВАЖНО: будь конкретным. Не пиши "изучи программирование" — пиши "изучи Python: курс 'Поколение Python' на Stepik". Оценивай реалистично."""
     return build_messages("", prompt)
 
 
@@ -147,6 +190,76 @@ def chat_messages(user: dict, history: list[dict], user_message: str) -> list[di
     messages.extend(history)
     messages.append({"role": "user", "content": user_message})
     return messages
+
+
+async def skill_gap_analysis(user: dict) -> str:
+    msgs = skill_gap_messages(user)
+    response = await client.chat.completions.create(
+        model="deepseek-chat", messages=msgs, max_tokens=2000, temperature=0.7,
+    )
+    return response.choices[0].message.content
+
+
+async def score_vacancies(user: dict, vacancies: list[dict]) -> list[dict]:
+    """Score each vacancy for compatibility with user profile."""
+    profile = _build_profile_context(user)
+    vacancy_texts = []
+    for i, v in enumerate(vacancies):
+        vacancy_texts.append(f"{i+1}. {v.get('title','')} — {v.get('company','')} | Опыт: {v.get('experience','')} | Зарплата: {v.get('salary','')}")
+    vacancies_str = "\n".join(vacancy_texts)
+
+    prompt = f"""Оцени совместимость каждой вакансии с профилем пользователя.
+
+{profile}
+
+Вакансии:
+{vacancies_str}
+
+Для каждой вакансии выведи ТОЛЬКО одну строку в формате:
+НОМЕР|ПРОЦЕНТ|КОРОТКАЯ_ПРИЧИНА
+
+Пример:
+1|85|Навыки Python совпадают, подходит по возрасту
+2|40|Требуется опыт 3+ года, не подходит для начинающего
+
+Если вакансий нет — выведи "нет вакансий". Оценивай строго: учитывай возраст, образование, навыки, опыт."""
+
+    messages = [
+        {"role": "system", "content": "Ты эксперт по подбору персонала. Оцениваешь совместимость кандидата и вакансии."},
+        {"role": "user", "content": prompt},
+    ]
+    response = await client.chat.completions.create(
+        model="deepseek-chat", messages=messages, max_tokens=800, temperature=0.3,
+    )
+    text = response.choices[0].message.content.strip()
+
+    scores = []
+    for line in text.split("\n"):
+        parts = line.strip().split("|")
+        if len(parts) >= 3:
+            try:
+                idx = int(parts[0].strip()) - 1
+                score = int(parts[1].strip().replace("%", ""))
+                reason = parts[2].strip()
+                if 0 <= idx < len(vacancies):
+                    scored = dict(vacancies[idx])
+                    scored["match_score"] = min(100, max(0, score))
+                    scored["match_reason"] = reason
+                    scores.append(scored)
+            except (ValueError, IndexError):
+                continue
+
+    # Add unscored vacancies
+    scored_ids = {v.get("id") for v in scores}
+    for v in vacancies:
+        if v.get("id") not in scored_ids:
+            scored = dict(v)
+            scored["match_score"] = 0
+            scored["match_reason"] = ""
+            scores.append(scored)
+
+    scores.sort(key=lambda x: x.get("match_score", 0), reverse=True)
+    return scores
 
 
 async def suggest_search_queries(user: dict) -> list[str]:

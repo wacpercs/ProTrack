@@ -248,6 +248,37 @@ class ApiService {
     }
   }
 
+  // Skill Gap Analysis
+  Future<String> getSkillGap() async {
+    try {
+      final response = await _makeRequest('GET', '/skill-gap');
+      final data = jsonDecode(response.body);
+      return data['result'] ?? 'Не удалось провести анализ';
+    } catch (e) {
+      return 'Ошибка загрузки: $e';
+    }
+  }
+
+  // Вакансии со скорингом
+  Future<List<dynamic>> getVacanciesScored(String query, String experience, int page) async {
+    try {
+      final response = await _makeRequest(
+        'POST',
+        '/vacancies/scored',
+        body: jsonEncode({
+          'query': query,
+          'experience': experience,
+          'page': page
+        }),
+      );
+      final data = jsonDecode(response.body);
+      return data['items'] ?? [];
+    } catch (e) {
+      debugPrint('Error loading scored vacancies: $e');
+      return getVacancies(query, experience, page);
+    }
+  }
+
   // Подсказки для поиска
   Future<List<String>> getVacancySuggestions() async {
     try {
