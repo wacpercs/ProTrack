@@ -53,6 +53,25 @@ app.include_router(api_router)
 app.mount("/app/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
 
+# Serve landing page static files (images, audio)
+app.mount("/landing", StaticFiles(directory="static/landing"), name="landing")
+
+
+@app.get("/")
+async def landing_index():
+    return FileResponse("static/landing/index.html")
+
+
+@app.get("/breaking")
+async def landing_breaking():
+    return FileResponse("static/landing/breaking.html")
+
+
+@app.get("/emo")
+async def landing_emo():
+    return FileResponse("static/landing/emo.html")
+
+
 @app.get("/download/apk")
 async def download_apk():
     return FileResponse("static/protrack.apk", filename="ProTrack.apk", media_type="application/vnd.android.package-archive")
