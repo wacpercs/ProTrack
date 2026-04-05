@@ -1495,6 +1495,41 @@
             0%, 100% { box-shadow: 0 0 5px rgba(255,45,111,0.2); }
             50% { box-shadow: 0 0 20px rgba(255,45,111,0.4); }
         }
+        /* === FLYING ALT GIRLS === */
+        .alt-flock {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9995;
+            overflow: hidden;
+        }
+        .alt-bird {
+            position: absolute;
+            width: 120px;
+            height: auto;
+            opacity: 0;
+        }
+        .alt-bird.fly-right {
+            animation: altFlyRight 4s linear forwards;
+        }
+        .alt-bird.fly-left {
+            animation: altFlyLeft 4s linear forwards;
+            transform: scaleX(-1);
+        }
+        @keyframes altFlyRight {
+            0% { left: -150px; opacity: 0; }
+            5% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 110%; opacity: 0; }
+        }
+        @keyframes altFlyLeft {
+            0% { right: -150px; left: auto; opacity: 0; }
+            5% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { right: 110%; left: auto; opacity: 0; }
+        }
+
         body.emo-intro-active { overflow: hidden; }
     </style>
 </head>
@@ -2252,6 +2287,82 @@
     })();
     </script>
 
+
+    <!-- FLYING ALT FLOCK -->
+    <div class="alt-flock" id="altFlock"></div>
+    <audio id="seagullSound" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="></audio>
+
+    <script>
+    (function(){
+        var flock = document.getElementById('altFlock');
+        var goRight = true;
+        var seagullUrl = null;
+
+        // Try to load seagull sound
+        try {
+            var audio = document.getElementById('seagullSound');
+            // We'll use a simple oscillator for seagull-like sound
+            function playSeagull() {
+                try {
+                    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    // Seagull cry: frequency sweep
+                    for (var s = 0; s < 3; s++) {
+                        var osc = ctx.createOscillator();
+                        var gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'sine';
+                        var startTime = ctx.currentTime + s * 0.6;
+                        osc.frequency.setValueAtTime(800 + Math.random() * 400, startTime);
+                        osc.frequency.linearRampToValueAtTime(1200 + Math.random() * 300, startTime + 0.15);
+                        osc.frequency.linearRampToValueAtTime(600 + Math.random() * 200, startTime + 0.4);
+                        gain.gain.setValueAtTime(0, startTime);
+                        gain.gain.linearRampToValueAtTime(0.06, startTime + 0.05);
+                        gain.gain.linearRampToValueAtTime(0.03, startTime + 0.2);
+                        gain.gain.linearRampToValueAtTime(0, startTime + 0.45);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.5);
+                    }
+                } catch(e) {}
+            }
+        } catch(e) {}
+
+        function spawnFlock() {
+            var direction = goRight ? 'fly-right' : 'fly-left';
+            goRight = !goRight;
+
+            // V-formation: 5 birds
+            var positions = [
+                { top: 30, delay: 0 },      // leader
+                { top: 22, delay: 0.3 },     // upper left
+                { top: 38, delay: 0.3 },     // lower left
+                { top: 15, delay: 0.6 },     // far upper
+                { top: 45, delay: 0.6 },     // far lower
+            ];
+
+            playSeagull();
+
+            positions.forEach(function(pos) {
+                var img = document.createElement('img');
+                img.src = 'alt.png';
+                img.className = 'alt-bird ' + direction;
+                img.style.top = pos.top + '%';
+                img.style.animationDelay = pos.delay + 's';
+                img.style.width = (90 + Math.random() * 40) + 'px';
+                flock.appendChild(img);
+
+                setTimeout(function() {
+                    img.remove();
+                }, 5000);
+            });
+        }
+
+        // First flock after 10 seconds
+        setTimeout(spawnFlock, 10000);
+        // Then every 2 minutes
+        setInterval(spawnFlock, 120000);
+    })();
+    </script>
 
     <!-- HOCKEY EASTER EGG -->
     <div id="hockeyModal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;cursor:pointer;" onclick="this.style.display='none'">
