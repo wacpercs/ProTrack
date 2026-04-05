@@ -3924,6 +3924,13 @@
         });
     </script>
 
+    <!-- COOKIE BANNER -->
+    <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;z-index:99998;background:rgba(20,20,20,0.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--toxic-dark);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--white-dim);">
+        <span>Мы используем cookies для улучшения вашего опыта. Продолжая, вы соглашаетесь с <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style="color:var(--toxic);text-decoration:underline;">пользовательским соглашением</a>.</span>
+        <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('cookies_accepted','1')" style="background:var(--toxic-dark);border:1px solid var(--toxic);color:#fff;padding:8px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;">Принять</button>
+    </div>
+    <script>if(localStorage.getItem('cookies_accepted'))document.getElementById('cookieBanner').style.display='none';</script>
+
     <!-- HOCKEY EASTER EGG -->
     <div id="hockeyModal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;cursor:pointer;" onclick="this.style.display='none'">
         <div style="background:#2a2a2a;border:2px solid var(--toxic);border-radius:8px;padding:32px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 0 40px rgba(0,200,83,0.3);" onclick="event.stopPropagation()">

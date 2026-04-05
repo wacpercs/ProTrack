@@ -2288,6 +2288,13 @@
     </script>
 
 
+    <!-- COOKIE BANNER -->
+    <div id="cookieBanner" style="position:fixed;bottom:0;left:0;right:0;z-index:99998;background:rgba(13,5,10,0.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(255,45,111,0.3);padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:12px;color:#999;">
+        <span>Мы используем cookies (и слёзы) для работы сайта. Продолжая, вы соглашаетесь с <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style="color:#ff2d6f;text-decoration:underline;">пользовательским соглашением</a>.</span>
+        <button onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('cookies_accepted_emo','1')" style="background:transparent;border:1px solid #ff2d6f;color:#ff2d6f;padding:8px 20px;font-family:'Share Tech Mono',monospace;font-size:12px;cursor:pointer;letter-spacing:1px;">Принять</button>
+    </div>
+    <script>if(localStorage.getItem('cookies_accepted_emo'))document.getElementById('cookieBanner').style.display='none';</script>
+
     <!-- FLYING ALT FLOCK -->
     <div class="alt-flock" id="altFlock"></div>
     <audio id="seagullSound" preload="auto" src="seagull-squawks.mp3"></audio>
