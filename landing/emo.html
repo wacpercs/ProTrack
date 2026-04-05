@@ -2251,5 +2251,42 @@
     })();
     </script>
 
+
+    <!-- HOCKEY EASTER EGG -->
+    <div id="hockeyModal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;cursor:pointer;" onclick="this.style.display='none'">
+        <div style="background:#1a0a10;border:2px solid #ff2d6f;border-radius:8px;padding:32px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 0 40px rgba(255,45,111,0.3);" onclick="event.stopPropagation()">
+            <div style="text-align:center;margin-bottom:16px;">
+                <span style="font-family:'Permanent Marker',cursive;font-size:24px;color:#ff2d6f;">HOCKEY IS BETTER THAN WOMEN</span>
+            </div>
+            <ol style="font-family:'Share Tech Mono',monospace;font-size:13px;color:#ccc;line-height:2;padding-left:24px;">
+                <li>In hockey, everyone likes it rough.</li>
+                <li>You only get 5 minutes for fighting.</li>
+                <li>"Puck" is not a dirty word.</li>
+                <li>You don't have to play in the neutral zone.</li>
+                <li>It's possible to score a few times a night.</li>
+                <li>When you "pull the goalie" nobody gets pregnant.</li>
+                <li>Missing teeth doesn't stop you from scoring.</li>
+                <li>You can always get new wood if your stick breaks.</li>
+                <li>The Zamboni gets to clean up the mess.</li>
+                <li>Periods only last 20 minutes!</li>
+            </ol>
+            <div style="text-align:center;margin-top:16px;font-size:11px;color:#555;letter-spacing:2px;">TOFINO CANADA</div>
+            <div style="text-align:center;margin-top:12px;font-size:10px;color:#333;">[ click anywhere to close ]</div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        var seq='',target='hockey';
+        document.addEventListener('keydown',function(e){
+            seq+=e.key.toLowerCase();
+            if(seq.length>20)seq=seq.slice(-20);
+            if(seq.includes(target)){
+                seq='';
+                document.getElementById('hockeyModal').style.display='flex';
+            }
+        });
+    })();
+    </script>
+
 </body>
 </html>
