@@ -1425,9 +1425,90 @@
 
             .btn-emo { padding: 14px 32px; font-size: 1rem; }
         }
+        /* === EMO INTRO OVERLAY === */
+        .emo-intro-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 99999;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            overflow: hidden;
+        }
+        .emo-intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .emo-intro-img {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('emo.webp') center center / cover no-repeat;
+            background-color: #000;
+            opacity: 0;
+            animation: emoIntroFadeIn 1.5s ease 0.3s forwards;
+            filter: saturate(0.7) contrast(1.1);
+        }
+        .emo-intro-bottom {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px 50px;
+            text-align: center;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.95));
+            width: 100%;
+            padding-top: 140px;
+        }
+        .emo-intro-subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(14px, 3vw, 20px);
+            color: #888;
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: emoIntroFadeIn 0.8s ease 1.2s forwards;
+            letter-spacing: 1px;
+        }
+        .emo-intro-btn {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 18px;
+            letter-spacing: 3px;
+            padding: 14px 44px;
+            background: transparent;
+            border: 2px solid #ff2d6f;
+            color: #ff2d6f;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: emoIntroFadeIn 0.8s ease 1.6s forwards, emoIntroPulse 2.5s ease 2.5s infinite;
+        }
+        .emo-intro-btn:hover {
+            background: #ff2d6f;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 45, 111, 0.5);
+        }
+        @keyframes emoIntroFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes emoIntroPulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,45,111,0.2); }
+            50% { box-shadow: 0 0 20px rgba(255,45,111,0.4); }
+        }
+        body.emo-intro-active { overflow: hidden; }
     </style>
 </head>
-<body>
+<body class="emo-intro-active">
+
+    <!-- EMO INTRO OVERLAY -->
+    <div class="emo-intro-overlay" id="emoIntroOverlay">
+        <div class="emo-intro-img"></div>
+        <div class="emo-intro-bottom">
+            <div class="emo-intro-subtitle">Группа ИСт-231 Кузбасского политеха представляет</div>
+            <button class="emo-intro-btn" onclick="launchEmo()">Продолжить</button>
+        </div>
+    </div>
 
     <!-- VIGNETTE -->
     <div class="vignette"></div>
@@ -2006,6 +2087,13 @@
     </div>
 
     <script>
+    // === EMO INTRO ===
+    function launchEmo() {
+        var overlay = document.getElementById('emoIntroOverlay');
+        overlay.classList.add('hidden');
+        document.body.classList.remove('emo-intro-active');
+    }
+
     // === CLIPPY EMO ASSISTANT ===
     (function() {
         var messages = [
