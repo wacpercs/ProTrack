@@ -2290,42 +2290,22 @@
 
     <!-- FLYING ALT FLOCK -->
     <div class="alt-flock" id="altFlock"></div>
-    <audio id="seagullSound" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="></audio>
+    <audio id="seagullSound" preload="auto" src="seagull-squawks.mp3"></audio>
 
     <script>
     (function(){
         var flock = document.getElementById('altFlock');
-        var goRight = true;
+        var goRight = false;
         var seagullUrl = null;
 
-        // Try to load seagull sound
-        try {
-            var audio = document.getElementById('seagullSound');
-            // We'll use a simple oscillator for seagull-like sound
-            function playSeagull() {
-                try {
-                    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    // Seagull cry: frequency sweep
-                    for (var s = 0; s < 3; s++) {
-                        var osc = ctx.createOscillator();
-                        var gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        var startTime = ctx.currentTime + s * 0.6;
-                        osc.frequency.setValueAtTime(800 + Math.random() * 400, startTime);
-                        osc.frequency.linearRampToValueAtTime(1200 + Math.random() * 300, startTime + 0.15);
-                        osc.frequency.linearRampToValueAtTime(600 + Math.random() * 200, startTime + 0.4);
-                        gain.gain.setValueAtTime(0, startTime);
-                        gain.gain.linearRampToValueAtTime(0.06, startTime + 0.05);
-                        gain.gain.linearRampToValueAtTime(0.03, startTime + 0.2);
-                        gain.gain.linearRampToValueAtTime(0, startTime + 0.45);
-                        osc.start(startTime);
-                        osc.stop(startTime + 0.5);
-                    }
-                } catch(e) {}
-            }
-        } catch(e) {}
+        var seagullAudio = document.getElementById('seagullSound');
+        function playSeagull() {
+            try {
+                seagullAudio.currentTime = 0;
+                seagullAudio.volume = 0.3;
+                seagullAudio.play();
+            } catch(e) {}
+        }
 
         function spawnFlock() {
             var direction = goRight ? 'fly-right' : 'fly-left';
