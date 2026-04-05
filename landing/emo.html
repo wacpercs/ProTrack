@@ -78,24 +78,18 @@
             background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
         }
 
-        /* === DARK MODE TOGGLE === */
+        /* === SAD MODE TOGGLE (inside clippy container) === */
         .dark-toggle {
-            position: fixed;
-            top: 60px;
-            right: 12px;
-            z-index: 9999;
             background: rgba(255, 45, 111, 0.15);
             border: 1px solid rgba(255, 45, 111, 0.4);
             color: #ff2d6f;
-            padding: 6px 12px;
+            padding: 5px 10px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             cursor: pointer;
             transition: all 0.3s;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            pointer-events: auto;
             white-space: nowrap;
-            max-width: calc(100vw - 24px);
         }
         .dark-toggle:hover {
             background: rgba(255, 45, 111, 0.3);
@@ -1517,7 +1511,6 @@
     <div class="particles-container" id="particles"></div>
 
     <!-- DARK MODE TOGGLE -->
-    <button class="dark-toggle" id="darkToggle" onclick="document.body.classList.toggle('extra-sad'); this.textContent = document.body.classList.contains('extra-sad') ? '// extra sad mode ON' : '// sad mode'">// sad mode</button>
 
     <!-- STICKY HEADER -->
     <div class="sticky-header" id="stickyHeader">
@@ -2084,6 +2077,7 @@
             <!-- Emo fringe/bangs over one eye (visible pink-dark) -->
             <path d="M30 28 Q42 12 58 20 Q52 28 44 40 Q38 36 34 32 Z" fill="#6a1838" stroke="#8b2050" stroke-width="0.5"/>
         </svg>
+        <button class="dark-toggle" id="darkToggle" onclick="document.body.classList.toggle('extra-sad'); this.textContent = document.body.classList.contains('extra-sad') ? '// extra sad mode ON' : '// sad mode'">// sad mode</button>
     </div>
 
     <script>
