@@ -90,6 +90,9 @@
             transition: all 0.3s;
             pointer-events: auto;
             white-space: nowrap;
+            display: block;
+            margin-left: auto;
+            margin-top: 8px;
         }
         .dark-toggle:hover {
             background: rgba(255, 45, 111, 0.3);
@@ -1139,12 +1142,8 @@
             bottom: 20px;
             right: 10px;
             z-index: 9990;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
             pointer-events: none;
-            width: 124px;
+            text-align: right;
         }
 
         .clippy-bubble {
@@ -1187,7 +1186,8 @@
         .clippy-agent {
             width: 124px;
             height: 130px;
-            align-self: flex-end;
+            display: block;
+            margin-left: auto;
             cursor: pointer;
             pointer-events: auto;
             transition: transform 0.3s;
